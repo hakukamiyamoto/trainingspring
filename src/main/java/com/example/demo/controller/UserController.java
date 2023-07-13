@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
@@ -44,14 +45,15 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザー新規登録画面を表示
-	 * @param model Model
-	 * @return ユーザー情報一覧画面
-	 */
-	@GetMapping(value = "/user/add")
-	public String displayAdd(Model model) {
-		return "user/add";
-	}
+	   * ユーザー新規登録画面を表示
+	   * @param model Model
+	   * @return ユーザー情報一覧画面
+	   */
+	  @GetMapping(value = "/user/add")
+	  public String displayAdd(Model model) {
+	    model.addAttribute("userRequest", new UserRequest());
+	    return "user/add";
+	  }
 
 	/**
 	 * ユーザー情報詳細画面を表示
