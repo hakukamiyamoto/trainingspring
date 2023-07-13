@@ -1,11 +1,36 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
   xmlns:th="http://www.thymeleaf.org">
-<head th:replace="common/head :: head_fragment(title = 'ユーザー新規登録', scripts = ~{::script}, links = ~{::link})"></head>
+<head
+  th:replace="common/head :: head_fragment(title = 'ユーザー新規登録', scripts = ~{::script}, links = ~{::link})"></head>
 <body>
   <div class="container">
-    <h1>新規登録画面ダミー</h1>
-    <a href="/user/list">一覧に戻る</a>
+    <div th:if="${validationError}" th:each="error : ${validationError}">
+      <label class="text-danger" th:text="${error}"></label>
+    </div>
+    <h1>ユーザー新規登録</h1>
+    <form th:action="@{/user/create}" th:object="${userRequest}" th:method="post">
+
+      <div class="form-group">
+        <label>名前：<span class="text-danger">※</span></label>
+        <input type="text" th:field="*{name}" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>住所：</label>
+        <input type="text" th:field="*{address}" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label>電話番号：<span class="text-danger">※</span></label>
+        <input type="text" th:field="*{phone}" class="form-control">
+      </div>
+      <br />
+      <div class="text-center">
+        <a href="/user/list" class="btn btn-secondary">キャンセル</a>
+        <input type="submit" value="　登録　" class="btn btn-primary">
+      </div>
+    </form>
   </div>
 </body>
 </html>
