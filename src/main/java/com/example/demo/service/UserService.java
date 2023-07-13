@@ -13,7 +13,6 @@ import com.example.demo.repository.UserRepository;
  */
 @Service
 public class UserService {
-
   /**
    * ユーザー情報 Repository
    */
@@ -26,5 +25,13 @@ public class UserService {
    */
   public List<User> searchAll() {
     return userRepository.findAll();
+  }
+
+  /**
+   * ユーザー情報 主キー検索
+   * @return 検索結果
+   */
+  public User findById(Long id) {
+    return userRepository.findById(id).get();
   }
 }
