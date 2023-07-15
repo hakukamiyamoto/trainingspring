@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
@@ -38,6 +39,21 @@ public class UserService {
 	public User findById(Long id) {
 		return userRepository.findById(id).get();
 	}
+	
+	 /**
+	   * ユーザー情報 新規登録
+	   * @param user ユーザー情報
+	   */
+	  public void create(UserRequest userRequest) {
+	    Date now = new Date();
+	    User user = new User();
+	    user.setName(userRequest.getName());
+	    user.setAddress(userRequest.getAddress());
+	    user.setPhone(userRequest.getPhone());
+	    user.setCreateDate(now);
+	    user.setUpdateDate(now);
+	    userRepository.save(user);
+	  }
 
 	/**
 	 * ユーザー情報 更新
