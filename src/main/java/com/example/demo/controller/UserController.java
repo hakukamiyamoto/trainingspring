@@ -47,12 +47,23 @@ public class UserController {
 	/**
 	   * ユーザー新規登録画面を表示
 	   * @param model Model
-	   * @return ユーザー情報一覧画面
+	   * @return ユーザー新規登録画面
 	   */
 	  @GetMapping(value = "/user/add")
 	  public String displayAdd(Model model) {
 	    model.addAttribute("userRequest", new UserRequest());
-	    return "user/add";
+		return "user/add";
+	  }
+	  
+	  /**
+	   * ユーザー一括登録画面を表示
+	   * @param model Model
+	   * @return ユーザー一括登録画面
+	   */
+	  @GetMapping(value = "/user/bulkadd")
+	  public String displayBulkAdd(Model model) {
+	    model.addAttribute("userRequest", new UserRequest());
+	    return "user/bulkadd";
 	  }
 
 	/**
