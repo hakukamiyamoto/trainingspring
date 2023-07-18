@@ -3,11 +3,11 @@ package com.example.demo.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserRequestsWrapper {
+public class BulkUserRequests {
 	private List<UserRequest> userRequests;
 
 	// コンストラクタ
-	public UserRequestsWrapper() {
+	public BulkUserRequests() {
 		// userRequests を新しい空のリストで初期化する
 		this.userRequests = new ArrayList<>();
 	}

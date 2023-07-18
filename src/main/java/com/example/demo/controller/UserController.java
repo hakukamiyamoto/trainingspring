@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.UserRequest;
-import com.example.demo.dto.UserRequestsWrapper;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
@@ -62,7 +62,7 @@ public class UserController {
 	 */
 	@GetMapping("/user/bulkadd")
 	public String showCreateForm(Model model) {
-	    UserRequestsWrapper userRequestsWrapper = new UserRequestsWrapper();
+	    BulkUserRequests userRequestsWrapper = new BulkUserRequests();
 	    for (int i = 0; i < 3; i++) {
 	        userRequestsWrapper.getUserRequests().add(new UserRequest());
 	    }
@@ -96,13 +96,13 @@ public class UserController {
 	
 	/**
 	 * ユーザー一括登録処理
-	 * @param userRequestsWrapper ユーザー情報のリクエストラッパー
+	 * @param bulkUserRequests ユーザー情報のリクエストラッパー
 	 * @param model Model
 	 * @return ユーザー情報一覧ページ
 	 */
 	@PostMapping("/user/bulkcreate")
-	public String bulkCreate(@ModelAttribute UserRequestsWrapper userRequestsWrapper, Model model) {
-	    List<UserRequest> userRequests = userRequestsWrapper.getUserRequests();
+	public String bulkCreate(@ModelAttribute BulkUserRequests bulkUserRequests, Model model) {
+	    List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
 
 	    List<String> validationErrorList = new ArrayList<>();
 
