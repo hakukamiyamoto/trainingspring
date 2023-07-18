@@ -39,21 +39,21 @@ public class UserService {
 	public User findById(Long id) {
 		return userRepository.findById(id).get();
 	}
-	
-	 /**
-	   * ユーザー情報 新規登録
-	   * @param user ユーザー情報
-	   */
-	  public void create(UserRequest userRequest) {
-	    Date now = new Date();
-	    User user = new User();
-	    user.setName(userRequest.getName());
-	    user.setAddress(userRequest.getAddress());
-	    user.setPhone(userRequest.getPhone());
-	    user.setCreateDate(now);
-	    user.setUpdateDate(now);
-	    userRepository.save(user);
-	  }
+
+	/**
+	  * ユーザー情報 新規登録
+	  * @param user ユーザー情報
+	  */
+	public void create(UserRequest userRequest) {
+		Date now = new Date();
+		User user = new User();
+		user.setName(userRequest.getName());
+		user.setAddress(userRequest.getAddress());
+		user.setPhone(userRequest.getPhone());
+		user.setCreateDate(now);
+		user.setUpdateDate(now);
+		userRepository.save(user);
+	}
 
 	/**
 	 * ユーザー情報 更新
@@ -66,5 +66,21 @@ public class UserService {
 		user.setPhone(userUpdateRequest.getPhone());
 		user.setUpdateDate(new Date());
 		userRepository.save(user);
+	}
+
+	
+	
+	public void bulkCreate(List<UserRequest> userRequests) {
+	    Date now = new Date();
+
+	    for (UserRequest userRequest : userRequests) {
+	        User user = new User();
+	        user.setName(userRequest.getName());
+	        user.setAddress(userRequest.getAddress());
+	        user.setPhone(userRequest.getPhone());
+	        user.setCreateDate(now);
+	        user.setUpdateDate(now);
+	        userRepository.save(user);
+	    }
 	}
 }

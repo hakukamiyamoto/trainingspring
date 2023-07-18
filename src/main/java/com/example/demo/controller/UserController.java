@@ -12,10 +12,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserRequestsWrapper;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
@@ -60,11 +60,16 @@ public class UserController {
 	 * @param model Model
 	 * @return ユーザー一括登録画面
 	 */
-	@GetMapping(value = "/user/bulkadd")
-	public String displayBulkAdd(Model model) {
-		model.addAttribute("userRequest", new UserRequest());
-		return "user/bulkadd";
+	@GetMapping("/user/bulkadd")
+	public String showCreateForm(Model model) {
+	    UserRequestsWrapper userRequestsWrapper = new UserRequestsWrapper();
+	    for (int i = 0; i < 3; i++) {
+	        userRequestsWrapper.getUserRequests().add(new UserRequest());
+	    }
+	    model.addAttribute("userRequestsWrapper", userRequestsWrapper);
+	    return "user/bulkadd";
 	}
+
 
 	/**
 	 * ユーザー新規登録
@@ -72,7 +77,7 @@ public class UserController {
 	 * @param model Model
 	 * @return ユーザー情報一覧画面
 	 */
-	@RequestMapping(value = "/user/create", method = RequestMethod.POST)
+	@PostMapping("/user/create")
 	public String create(@Validated @ModelAttribute UserRequest userRequest, BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
@@ -88,6 +93,46 @@ public class UserController {
 		userService.create(userRequest);
 		return "redirect:/user/list";
 	}
+	
+	/**
+	 * ユーザー一括登録処理
+	 * @param userRequestsWrapper ユーザー情報のリクエストラッパー
+	 * @param model Model
+	 * @return ユーザー情報一覧ページ
+	 */
+	@PostMapping("/user/bulkcreate")
+	public String bulkCreate(@ModelAttribute UserRequestsWrapper userRequestsWrapper, Model model) {
+	    List<UserRequest> userRequests = userRequestsWrapper.getUserRequests();
+
+	    List<String> validationErrorList = new ArrayList<>();
+
+	    // 入力チェックとバリデーションエラーの処理
+	    for (int i = 0; i < userRequests.size(); i++) {
+	        UserRequest userRequest = userRequests.get(i);
+
+	        // 名前のバリデーション
+	        if (userRequest.getName() == null || userRequest.getName().isEmpty()) {
+	            validationErrorList.add("ユーザー" + (i + 1) + "の名前は必須です。");
+	        }
+
+	        // 電話番号のバリデーション
+	        if (userRequest.getPhone() == null || userRequest.getPhone().isEmpty()) {
+	            validationErrorList.add("ユーザー" + (i + 1) + "の電話番号は必須です。");
+	        }
+	    }
+
+	    // バリデーションエラーがある場合はエラーメッセージを表示
+	    if (!validationErrorList.isEmpty()) {
+	        model.addAttribute("validationError", validationErrorList);
+	        return "user/bulkadd";
+	    }
+
+	    // ユーザーの一括登録処理
+	    userService.bulkCreate(userRequests);
+
+	    return "redirect:/user/list";
+	}
+
 
 	/**
 	 * ユーザー情報詳細画面を表示
@@ -126,7 +171,7 @@ public class UserController {
 	 * @param model Model
 	 * @return ユーザー情報詳細画面
 	 */
-	@RequestMapping(value = "/user/update", method = RequestMethod.POST)
+	@PostMapping("/user/update")
 	public String update(@Validated @ModelAttribute UserUpdateRequest userUpdateRequest, BindingResult result,
 			Model model) {
 
