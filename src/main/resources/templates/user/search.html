@@ -9,31 +9,15 @@
 	<div class="container">
 		<h1>ユーザー住所検索</h1>
 		<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message text-danger"></div>
-		<div class="text-center">
-			<div class="search-bar">
-				<form th:action="@{/user/searchfromstart}" th:object="${keywordFromStart}" method="post">
-					<input type="text" th:field="*{keyword}" class="form-control" />
-					<b>から始まる</b>
-					<button type="submit" class="btn btn-primary">検索</button>
-				</form>
-			</div>
-			<br>
-			<br>
-			<div class="search-bar">
-				<form th:action="@{/user/searchendwith}" th:object="${keywordEndWith}" method="post">
-					<input type="text" th:field="*{keyword}" class="form-control" />
-					<label><b>で終わる</b> <button type="submit" class="btn btn-primary">検索</button></label>
-				</form>
-			</div>
-			<br>
-			<br>
-			<div class="search-bar">
-				<form th:action="@{/user/searchincluding}" th:object="${keywordIncluding}" method="post">
-					<input type="text" th:field="*{keyword}" class="form-control" />
-					<label><b>を含む</b> <button type="submit" class="btn btn-primary">検索</button></label>
-				</form>
-			</div>
-		</div>
+		<form th:action="@{/user/search}" th:object="${keywordForm}" method="post">
+    <input type="text" th:field="*{keyword}" class="form-control" />
+    <select th:field="*{searchType}">
+        <option value="fromStart">から始まる</option>
+        <option value="endWith">で終わる</option>
+        <option value="including">を含む</option>
+    </select>
+    <button type="submit" class="btn btn-primary">検索</button>
+</form>
 		<table class="table table-striped">
 			<thead>
 				<tr>
