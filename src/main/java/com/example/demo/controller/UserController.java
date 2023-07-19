@@ -203,6 +203,14 @@ public class UserController {
 		return "user/search";
 	}
 
+	
+	/**
+	 * 検索をするポストリクエスト
+	 * @param keywordForm　キーワードクラス
+	 * @param result
+	 * @param model
+	 * @return　user/search
+	 */
 	@PostMapping("/user/search")
 	public String search(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
 	    if (result.hasErrors()) {
