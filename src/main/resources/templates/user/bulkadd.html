@@ -9,9 +9,9 @@
 			<label class="text-danger" th:text="${error}"></label>
 		</div>
 		<h1>ユーザー一括登録</h1>
-		<form th:action="@{/user/bulkcreate}" th:object="${userRequestsWrapper}" th:method="post">
+		<form th:action="@{/user/bulkcreate}" th:object="${bulkUserRequests}" th:method="post">
 
-			<div th:each="userReq, iterStat : *{userRequests}">
+			<div id="inputFields" th:each="userReq, iterStat : *{userRequests}">
 				<h2 th:text="'ユーザー' + ${iterStat.index + 1}"></h2>
 
 				<div class="form-group">
@@ -32,11 +32,85 @@
 			</div>
 
 			<div class="text-center">
+				<button id="addFrameButton" class="btn btn-primary">枠追加</button>
 				<a href="/user/list" class="btn btn-secondary">キャンセル</a>
 				<input type="submit" value="　登録　" class="btn btn-primary">
 			</div>
 		</form>
 	</div>
+
+	<script>
+		document.querySelector('#addFrameButton').addEventListener('click', (e) => {
+			e.preventDefault();
+
+			const formCount = document.querySelectorAll('#inputFields').length;
+
+			// 新しい入力フィールドのセットを囲む<div>要素を作成します。
+			const newInputGroup = document.createElement('div');
+			newInputGroup.id = 'inputFields';
+
+			const newUser = document.createElement('h2');
+			newUser.textContent = 'ユーザー' + (formCount + 1);
+			newInputGroup.appendChild(newUser);
+
+			const newNameGroup = document.createElement('div');
+			newNameGroup.classList.add('form-group');
+
+			const newAddressGroup = document.createElement('div');
+			newAddressGroup.classList.add('form-group');
+
+			const newPhoneGroup = document.createElement('div');
+			newPhoneGroup.classList.add('form-group');
+
+			// 新しい名前入力フィールドとしての<input>要素を作成します。
+			const newNameForm = document.createElement('input');
+			newNameForm.type = 'text';
+			newNameForm.name = `userRequests[${formCount}].name`;
+			newNameForm.classList.add('form-control');
+
+
+			const newAddressForm = document.createElement('input');
+			newAddressForm.type = 'text';
+			newAddressForm.name = `userRequests[${formCount}].address`;
+			newAddressForm.classList.add('form-control');
+
+
+			const newPhoneForm = document.createElement('input');
+			newPhoneForm.type = 'text';
+			newPhoneForm.name = `userRequests[${formCount}].phone`;
+			newPhoneForm.classList.add('form-control');
+
+			// 各入力フィールドに対応する<label>要素を作成します。
+			const nameLabel = document.createElement('label');
+			nameLabel.innerHTML = '名前：<span class="text-danger">※</span>';
+			const addressLabel = document.createElement('label');
+			addressLabel.textContent = '住所：';
+			const phoneLabel = document.createElement('label');
+			phoneLabel.innerHTML = '電話番号：<span class="text-danger">※</span>';
+
+			// 各<label>要素と<input>要素を組み合わせて、各フィールドセットを完成させます。
+			newNameGroup.appendChild(nameLabel);
+			newNameGroup.appendChild(newNameForm);
+			newAddressGroup.appendChild(addressLabel);
+			newAddressGroup.appendChild(newAddressForm);
+			newPhoneGroup.appendChild(phoneLabel);
+			newPhoneGroup.appendChild(newPhoneForm);
+
+			// 各フィールドセットを全体を囲む<div>要素に追加します。
+			newInputGroup.appendChild(newNameGroup);
+			newInputGroup.appendChild(newAddressGroup);
+			newInputGroup.appendChild(newPhoneGroup);
+
+			const newHR = document.createElement('hr');
+			newHR.width = '400';
+			newInputGroup.appendChild(newHR);
+
+
+			// #inputFieldsというidを持つ要素（ここでは<div>）を選択し、その子要素として先ほど作成した全体を囲む<div>要素を追加します。
+			document.querySelector('.container form').insertBefore(newInputGroup, document.querySelector('#addFrameButton').parentNode);
+		});
+	</script>
+
 </body>
 
 </html>

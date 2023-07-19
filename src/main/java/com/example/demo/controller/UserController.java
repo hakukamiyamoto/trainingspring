@@ -56,22 +56,6 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザー一括登録画面を表示
-	 * @param model Model
-	 * @return ユーザー一括登録画面
-	 */
-	@GetMapping("/user/bulkadd")
-	public String showCreateForm(Model model) {
-	    BulkUserRequests userRequestsWrapper = new BulkUserRequests();
-	    for (int i = 0; i < 3; i++) {
-	        userRequestsWrapper.getUserRequests().add(new UserRequest());
-	    }
-	    model.addAttribute("userRequestsWrapper", userRequestsWrapper);
-	    return "user/bulkadd";
-	}
-
-
-	/**
 	 * ユーザー新規登録
 	 * @param userRequest リクエストデータ
 	 * @param model Model
@@ -93,46 +77,61 @@ public class UserController {
 		userService.create(userRequest);
 		return "redirect:/user/list";
 	}
+
+	/**
+	 * ユーザー一括登録画面を表示
+	 * @param model Model
+	 * @return ユーザー一括登録画面
+	 */
+	@GetMapping("/user/bulkadd")
+	public String showCreateForm(Model model) {
+		BulkUserRequests bulkUserRequests = new BulkUserRequests();
+		for (int i = 0; i < 1; i++) {
+			bulkUserRequests.getUserRequests().add(new UserRequest());
+		}
+		model.addAttribute("bulkUserRequests", bulkUserRequests);
+		return "user/bulkadd";
+	}
+
 	
 	/**
 	 * ユーザー一括登録処理
-	 * @param bulkUserRequests ユーザー情報のリクエストラッパー
+	 * @param bulkUserRequests ユーザー情報のリクエスト
 	 * @param model Model
 	 * @return ユーザー情報一覧ページ
 	 */
 	@PostMapping("/user/bulkcreate")
 	public String bulkCreate(@ModelAttribute BulkUserRequests bulkUserRequests, Model model) {
-	    List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
+		List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
 
-	    List<String> validationErrorList = new ArrayList<>();
+		List<String> validationErrorList = new ArrayList<>();
 
-	    // 入力チェックとバリデーションエラーの処理
-	    for (int i = 0; i < userRequests.size(); i++) {
-	        UserRequest userRequest = userRequests.get(i);
+		// 入力チェックとバリデーションエラーの処理
+		for (int i = 0; i < userRequests.size(); i++) {
+			UserRequest userRequest = userRequests.get(i);
 
-	        // 名前のバリデーション
-	        if (userRequest.getName() == null || userRequest.getName().isEmpty()) {
-	            validationErrorList.add("ユーザー" + (i + 1) + "の名前は必須です。");
-	        }
+			// 名前のバリデーション
+			if (userRequest.getName() == null || userRequest.getName().isEmpty()) {
+				validationErrorList.add("ユーザー" + (i + 1) + "の名前は必須です。");
+			}
 
-	        // 電話番号のバリデーション
-	        if (userRequest.getPhone() == null || userRequest.getPhone().isEmpty()) {
-	            validationErrorList.add("ユーザー" + (i + 1) + "の電話番号は必須です。");
-	        }
-	    }
+			// 電話番号のバリデーション
+			if (userRequest.getPhone() == null || userRequest.getPhone().isEmpty()) {
+				validationErrorList.add("ユーザー" + (i + 1) + "の電話番号は必須です。");
+			}
+		}
 
-	    // バリデーションエラーがある場合はエラーメッセージを表示
-	    if (!validationErrorList.isEmpty()) {
-	        model.addAttribute("validationError", validationErrorList);
-	        return "user/bulkadd";
-	    }
+		// バリデーションエラーがある場合はエラーメッセージを表示
+		if (!validationErrorList.isEmpty()) {
+			model.addAttribute("validationError", validationErrorList);
+			return "user/bulkadd";
+		}
 
-	    // ユーザーの一括登録処理
-	    userService.bulkCreate(userRequests);
+		// ユーザーの一括登録処理
+		userService.bulkCreate(userRequests);
 
-	    return "redirect:/user/list";
+		return "redirect:/user/list";
 	}
-
 
 	/**
 	 * ユーザー情報詳細画面を表示
