@@ -5,9 +5,12 @@
 
 <body>
 	<div class="container">
+		<label class="text-danger" th:text="${error}"></label>
 		<div th:if="${validationError}" th:each="error : ${validationError}">
-			<label class="text-danger" th:text="${error}"></label>
+
 		</div>
+
+
 		<h1>ユーザー一括登録</h1>
 		<form th:action="@{/user/bulkcreate}" th:object="${bulkUserRequests}" th:method="post">
 

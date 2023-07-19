@@ -67,6 +67,33 @@ public class UserService {
 		user.setUpdateDate(new Date());
 		userRepository.save(user);
 	}
+	
+	/**
+	 * 指定されたキーワードで住所を前方一致で検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByAddressStartingWith(String keyword) {
+		return userRepository.findByAddressStartingWith(keyword);
+	}
+
+	/**
+	 * 指定されたキーワードで住所を末尾一致で検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByAddressEndingWith(String keyword) {
+		return userRepository.findByAddressEndingWith(keyword);
+	}
+
+	/**
+	 * 指定されたキーワードを住所に含むユーザー情報を検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByAddressContaining(String keyword) {
+		return userRepository.findByAddressContaining(keyword);
+	}
 
 	
 	
@@ -83,4 +110,13 @@ public class UserService {
 	        userRepository.save(user);
 	    }
 	}
+	 /**
+	   * ユーザー情報 物理削除
+	   * @param id ユーザーID
+	   */
+	  public void delete(Long id) {
+	    User user = findById(id);
+	    userRepository.delete(user);
+	  }
+	
 }

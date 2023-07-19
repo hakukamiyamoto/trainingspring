@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.example.demo.dto.BulkUserRequests;
+import com.example.demo.dto.KeywordForm;
 import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
@@ -93,7 +94,6 @@ public class UserController {
 		return "user/bulkadd";
 	}
 
-	
 	/**
 	 * ユーザー一括登録処理
 	 * @param bulkUserRequests ユーザー情報のリクエスト
@@ -187,6 +187,112 @@ public class UserController {
 		// ユーザー情報の更新
 		userService.update(userUpdateRequest);
 		return String.format("redirect:/user/%d", userUpdateRequest.getId());
+	}
+
+	/**
+	 *  検索画面を表示するGETリクエスト
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/user/search")
+	public String showSearchPage(Model model) {
+		// 検索キーワード入力フォームの初期化
+		model.addAttribute("keywordFromStart", new KeywordForm());
+		model.addAttribute("keywordEndWith", new KeywordForm());
+		model.addAttribute("keywordIncluding", new KeywordForm());
+
+		// 全てのユーザー情報の表示
+		model.addAttribute("userlist", userService.searchAll());
+
+		return "user/search";
+	}
+
+	/**
+	 *  から始まる検索を実行するPOSTリクエスト
+	 * @param keywordForm
+	 * @param model
+	 * @return user/search
+	 */
+	@PostMapping("/user/searchfromstart")
+	public String searchFromStart(@Validated @ModelAttribute("keywordFromStart") KeywordForm keywordForm,
+			BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			model.addAttribute("errorMessage", "キーワードを入力してください。");
+			model.addAttribute("keywordEndWith", new KeywordForm());
+			model.addAttribute("keywordIncluding", new KeywordForm());
+			return "user/search";
+		}
+		String keyword = keywordForm.getKeyword();
+
+		model.addAttribute("keywordEndWith", new KeywordForm());
+		model.addAttribute("keywordIncluding", new KeywordForm());
+
+		// から始まる住所でのユーザー検索を実行
+		model.addAttribute("userlist", userService.searchByAddressStartingWith(keyword));
+
+		return "user/search";
+	}
+
+	/**
+	 *  で終わる検索を実行するPOSTリクエストのハンドラメソッド
+	 * @param keywordForm
+	 * @param model
+	 * @return
+	 */
+	@PostMapping("/user/searchendwith")
+	public String searchEndWith(@Validated @ModelAttribute("keywordEndWith") KeywordForm keywordForm,
+			BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "キーワードを入力してください。");
+	        model.addAttribute("keywordFromStart", new KeywordForm());
+	        model.addAttribute("keywordIncluding", new KeywordForm());
+	        return "user/search";
+	    }
+		String keyword = keywordForm.getKeyword();
+
+		model.addAttribute("keywordFromStart", new KeywordForm());
+		model.addAttribute("keywordIncluding", new KeywordForm());
+
+		// で終わる住所でのユーザー検索を実行
+		model.addAttribute("userlist", userService.searchByAddressEndingWith(keyword));
+
+		return "user/search";
+	}
+
+	// を含む検索を実行するPOSTリクエストのハンドラメソッド
+	@PostMapping("/user/searchincluding")
+	public String searchIncluding(@Validated @ModelAttribute("keywordIncluding") KeywordForm keywordForm,
+			BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "キーワードを入力してください。");
+	        model.addAttribute("keywordFromStart", new KeywordForm());
+	        model.addAttribute("keywordEndWith", new KeywordForm());
+	        return "user/search";
+	    }
+		String keyword = keywordForm.getKeyword();
+
+		model.addAttribute("keywordFromStart", new KeywordForm());
+		model.addAttribute("keywordEndWith", new KeywordForm());
+
+		// を含む住所でのユーザー検索を実行
+		model.addAttribute("userlist", userService.searchByAddressContaining(keyword));
+
+		return "user/search";
+	}
+
+	/**
+	   * ユーザー情報削除
+	   * @param id 表示するユーザーID
+	   * @param model Model
+	   * @return ユーザー情報詳細画面
+	   */
+	@GetMapping("/user/{id}/delete")
+	public String delete(@PathVariable Long id, Model model) {
+		// ユーザー情報の削除
+		userService.delete(id);
+		return "redirect:/user/list";
 	}
 
 }

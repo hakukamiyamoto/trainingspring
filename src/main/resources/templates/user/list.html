@@ -7,9 +7,11 @@
 	<div class="container">
 		<h1>ユーザー情報一覧</h1>
 		<div class="float-end">
+			<a th:href="@{/user/search}" class="btn btn-secondary">検索</a>
 			<a th:href="@{/user/add}" class="btn btn-primary">新規登録はこちら</a>
 
 			<a th:href="@{/user/bulkadd}" class="btn btn-primary">一括登録はこちら</a>
+			
 
 		</div>
 		<table class="table table-striped">
