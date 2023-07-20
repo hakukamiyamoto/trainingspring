@@ -11,7 +11,7 @@
 			<a th:href="@{/user/add}" class="btn btn-primary">新規登録はこちら</a>
 
 			<a th:href="@{/user/bulkadd}" class="btn btn-primary">一括登録はこちら</a>
-			
+
 
 		</div>
 		<table class="table table-striped">
@@ -40,10 +40,11 @@
 				</tr>
 			</tbody>
 		</table>
+		<form action="/user/csv" method="get" class="text-center">
+			<button type="submit" class="btn btn-primary">CSVエクスポート</button>
+		</form>
 	</div>
-	<form action="/user/csv" method="get" class="text-center">
-  <button type="submit" class="btn btn-primary">CSVエクスポート</button>
-</form>
+
 </body>
 
 </html>

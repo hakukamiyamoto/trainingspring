@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +25,6 @@ import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-
-
 
 /**
  * ユーザー情報 Controller
@@ -234,24 +231,26 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザーリストをCSV形式でエクスポートするエンドポイント
+	 * ユーザーリストをCSV形式でエクスポートする
 	 *
 	 * @return CSVファイルのバイト配列
 	 * @throws IOException 入出力例外が発生した場合
 	 */
 	@GetMapping("/user/csv")
-	public ResponseEntity<byte[]> exportUserListToCSV() throws IOException {
-		List<User> userList = userService.searchAll();
-		String csvData = convertToCSV(userList);
+	public ResponseEntity<byte[]> exportUserListToCSV() {
+		try {
+			List<User> userList = userService.searchAll();
+			String csvData = convertToCSV(userList);
+			byte[] csvBytes = csvData.getBytes("Shift_JIS");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.parseMediaType("text/csv"));
+			headers.setContentDispositionFormData("attachment", "userlist.csv");
+			headers.setContentLength(csvBytes.length);
 
-		byte[] csvBytes = csvData.getBytes("Shift_JIS");
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.parseMediaType("text/csv"));
-		headers.setContentDispositionFormData("attachment", "userlist.csv");
-		headers.setContentLength(csvBytes.length);
-
-		return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+			return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
 	}
 
 	private String convertToCSV(List<User> userList) {
