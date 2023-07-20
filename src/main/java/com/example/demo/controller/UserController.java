@@ -95,43 +95,32 @@ public class UserController {
 	}
 
 	/**
-	 * ユーザー一括登録処理
+	 * ユーザー一括登録
 	 * @param bulkUserRequests ユーザー情報のリクエスト
-	 * @param model Model
-	 * @return ユーザー情報一覧ページ
-	 */
-	@PostMapping("/user/bulkcreate")
-	public String bulkCreate(@ModelAttribute BulkUserRequests bulkUserRequests, Model model) {
-		List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
+     * @param result           入力チェック結果のバインディング結果
+     * @param model            モデル
+     * @return ユーザー登録画面
+     */
+    @PostMapping("/user/bulkcreate")
+    public String bulkCreate(@Validated @ModelAttribute BulkUserRequests bulkUserRequests, BindingResult result,
+            Model model) {
+        List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
 
-		List<String> validationErrorList = new ArrayList<>();
+        // 入力チェックエラーの場合
+        if (result.hasErrors()) {
+            List<String> errorList = new ArrayList<String>();
+            for (ObjectError error : result.getAllErrors()) {
+                errorList.add(error.getDefaultMessage());
+            }
+            model.addAttribute("validationError", errorList);
+            return "user/bulkadd";
+        }
 
-		// 入力チェックとバリデーションエラーの処理
-		for (int i = 0; i < userRequests.size(); i++) {
-			UserRequest userRequest = userRequests.get(i);
+        // ユーザーの一括登録処理
+        userService.bulkCreate(userRequests);
 
-			// 名前のバリデーション
-			if (userRequest.getName() == null || userRequest.getName().isEmpty()) {
-				validationErrorList.add("ユーザー" + (i + 1) + "の名前は必須です。");
-			}
-
-			// 電話番号のバリデーション
-			if (userRequest.getPhone() == null || userRequest.getPhone().isEmpty()) {
-				validationErrorList.add("ユーザー" + (i + 1) + "の電話番号は必須です。");
-			}
-		}
-
-		// バリデーションエラーがある場合はエラーメッセージを表示
-		if (!validationErrorList.isEmpty()) {
-			model.addAttribute("validationError", validationErrorList);
-			return "user/bulkadd";
-		}
-
-		// ユーザーの一括登録処理
-		userService.bulkCreate(userRequests);
-
-		return "redirect:/user/list";
-	}
+        return "redirect:/user/list";
+    }
 
 	/**
 	 * ユーザー情報詳細画面を表示
@@ -197,13 +186,12 @@ public class UserController {
 	@GetMapping("/user/search")
 	public String showSearchPage(Model model) {
 		// 検索キーワード入力フォームの初期化
-		model.addAttribute("keywordForm", new KeywordForm());  
+		model.addAttribute("keywordForm", new KeywordForm());
 		model.addAttribute("userlist", userService.searchAll());
 
 		return "user/search";
 	}
 
-	
 	/**
 	 * 検索をするポストリクエスト
 	 * @param keywordForm　キーワードクラス
@@ -213,28 +201,28 @@ public class UserController {
 	 */
 	@PostMapping("/user/search")
 	public String search(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
-	    if (result.hasErrors()) {
-	        model.addAttribute("errorMessage", "キーワードを入力してください。");
-	        return "user/search";
-	    }
-	    String keyword = keywordForm.getKeyword();
-	    String searchType = keywordForm.getSearchType();
+		if (result.hasErrors()) {
+			model.addAttribute("errorMessage", "キーワードを入力してください。");
+			return "user/search";
+		}
+		String keyword = keywordForm.getKeyword();
+		String searchType = keywordForm.getSearchType();
 
-	    List<User> searchResult;
-	    if ("fromStart".equals(searchType)) {
-	        searchResult = userService.searchByAddressStartingWith(keyword);
-	    } else if ("endWith".equals(searchType)) {
-	        searchResult = userService.searchByAddressEndingWith(keyword);
-	    } else if ("including".equals(searchType)) {
-	        searchResult = userService.searchByAddressContaining(keyword);
-	    } else {
-	        model.addAttribute("errorMessage", "不正な検索タイプです。");
-	        return "user/search";
-	    }
+		List<User> searchResult;
+		if ("fromStart".equals(searchType)) {
+			searchResult = userService.searchByAddressStartingWith(keyword);
+		} else if ("endWith".equals(searchType)) {
+			searchResult = userService.searchByAddressEndingWith(keyword);
+		} else if ("including".equals(searchType)) {
+			searchResult = userService.searchByAddressContaining(keyword);
+		} else {
+			model.addAttribute("errorMessage", "不正な検索タイプです。");
+			return "user/search";
+		}
 
-	    model.addAttribute("userlist", searchResult);
+		model.addAttribute("userlist", searchResult);
 
-	    return "user/search";
+		return "user/search";
 	}
 
 	/**
