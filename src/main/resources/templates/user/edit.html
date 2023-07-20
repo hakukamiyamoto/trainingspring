@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = 'ユーザー情報編集', scripts = ~{::script}, links = ~{::link})"></head>
+
+<body>
+	<div class="container">
+		<div th:if="${validationError}" th:each="error : ${validationError}">
+			<label class="text-danger" th:text="${error}"></label>
+		</div>
+		<h1>ユーザー情報編集</h1>
+
+		<form th:action="@{/user/update}" th:object="${userUpdateRequest}" th:method="post">
+			<input type="hidden" th:field="*{id}" />
+			<div>
+				<div class="row mx-md-n5">
+					<div class="col-2 pt-3 border bg-light">名前<span class="text-danger">※</span></div>
+					<div class="col py-2 border">
+						<input type="text" class="form-control" th:field="*{name}">
+					</div>
+				</div>
+				<div class="row mx-md-n5">
+					<div class="col-2 pt-3 border bg-light">住所</div>
+					<div class="col py-2 border">
+						<input type="text" class="form-control" th:field="*{address}">
+					</div>
+				</div>
+				<div class="row mx-md-n5">
+					<div class="col-2 pt-3 border bg-light">電話番号<span class="text-danger">※</span></div>
+					<div class="col py-2 border">
+						<input type="text" class="form-control" th:field="*{phone}">
+					</div>
+				</div>
+			</div>
+			<br />
+			<div class="text-center">
+				<input type="submit" class="btn btn-primary" value="　保存　">
+				<a th:href="@{/user/{id}(id=*{id})}" class="btn btn-secondary">キャンセル</a>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>
