@@ -1,9 +1,15 @@
 package com.example.demo.controller;
 
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +26,8 @@ import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+
+
 
 /**
  * ユーザー情報 Controller
@@ -97,30 +105,30 @@ public class UserController {
 	/**
 	 * ユーザー一括登録
 	 * @param bulkUserRequests ユーザー情報のリクエスト
-     * @param result           入力チェック結果のバインディング結果
-     * @param model            モデル
-     * @return ユーザー登録画面
-     */
-    @PostMapping("/user/bulkcreate")
-    public String bulkCreate(@Validated @ModelAttribute BulkUserRequests bulkUserRequests, BindingResult result,
-            Model model) {
-        List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
+	 * @param result           入力チェック結果のバインディング結果
+	 * @param model            モデル
+	 * @return ユーザー登録画面
+	 */
+	@PostMapping("/user/bulkcreate")
+	public String bulkCreate(@Validated @ModelAttribute BulkUserRequests bulkUserRequests, BindingResult result,
+			Model model) {
+		List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
 
-        // 入力チェックエラーの場合
-        if (result.hasErrors()) {
-            List<String> errorList = new ArrayList<String>();
-            for (ObjectError error : result.getAllErrors()) {
-                errorList.add(error.getDefaultMessage());
-            }
-            model.addAttribute("validationError", errorList);
-            return "user/bulkadd";
-        }
+		// 入力チェックエラーの場合
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			return "user/bulkadd";
+		}
 
-        // ユーザーの一括登録処理
-        userService.bulkCreate(userRequests);
+		// ユーザーの一括登録処理
+		userService.bulkCreate(userRequests);
 
-        return "redirect:/user/list";
-    }
+		return "redirect:/user/list";
+	}
 
 	/**
 	 * ユーザー情報詳細画面を表示
@@ -223,6 +231,42 @@ public class UserController {
 		model.addAttribute("userlist", searchResult);
 
 		return "user/search";
+	}
+
+	/**
+	 * ユーザーリストをCSV形式でエクスポートするエンドポイント
+	 *
+	 * @return CSVファイルのバイト配列
+	 * @throws IOException 入出力例外が発生した場合
+	 */
+	@GetMapping("/user/csv")
+	public ResponseEntity<byte[]> exportUserListToCSV() throws IOException {
+		List<User> userList = userService.searchAll();
+		String csvData = convertToCSV(userList);
+
+		byte[] csvBytes = csvData.getBytes("Shift_JIS");
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType("text/csv"));
+		headers.setContentDispositionFormData("attachment", "userlist.csv");
+		headers.setContentLength(csvBytes.length);
+
+		return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+	}
+
+	private String convertToCSV(List<User> userList) {
+		StringBuilder csvData = new StringBuilder();
+		csvData.append("id,名前,住所,電話番号"); // ヘッダー行を追加
+
+		for (User user : userList) {
+			csvData.append("\n");
+			csvData.append(user.getId()).append(",");
+			csvData.append(user.getName()).append(",");
+			csvData.append(user.getAddress()).append(",");
+			csvData.append(user.getPhone()).append(",");
+		}
+
+		return csvData.toString();
 	}
 
 	/**
