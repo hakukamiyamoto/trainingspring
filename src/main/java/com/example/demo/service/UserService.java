@@ -67,7 +67,7 @@ public class UserService {
 		user.setUpdateDate(new Date());
 		userRepository.save(user);
 	}
-	
+
 	/**
 	 * 指定されたキーワードで住所を前方一致で検索します。
 	 * @param keyword キーワード
@@ -95,28 +95,48 @@ public class UserService {
 		return userRepository.findByAddressContaining(keyword);
 	}
 
-	
+	/**
+	 * 
+	 * @param userList
+	 * @return
+	 */
+	public String convertToCSV(List<User> userList) {
+		StringBuilder csvData = new StringBuilder();
+		csvData.append("id,名前,住所,電話番号"); // ヘッダー行を追加
+
+		for (User user : userList) {
+			csvData.append("\n");
+			csvData.append(user.getId()).append(",");
+			csvData.append(user.getName()).append(",");
+			csvData.append(user.getAddress()).append(",");
+			csvData.append(user.getPhone()).append(",");
+		}
+
+		return csvData.toString();
+	}
+
 	
 	public void bulkCreate(List<UserRequest> userRequests) {
-	    Date now = new Date();
+		Date now = new Date();
 
-	    for (UserRequest userRequest : userRequests) {
-	        User user = new User();
-	        user.setName(userRequest.getName());
-	        user.setAddress(userRequest.getAddress());
-	        user.setPhone(userRequest.getPhone());
-	        user.setCreateDate(now);
-	        user.setUpdateDate(now);
-	        userRepository.save(user);
-	    }
+		for (UserRequest userRequest : userRequests) {
+			User user = new User();
+			user.setName(userRequest.getName());
+			user.setAddress(userRequest.getAddress());
+			user.setPhone(userRequest.getPhone());
+			user.setCreateDate(now);
+			user.setUpdateDate(now);
+			userRepository.save(user);
+		}
 	}
-	 /**
-	   * ユーザー情報 物理削除
-	   * @param id ユーザーID
-	   */
-	  public void delete(Long id) {
-	    User user = findById(id);
-	    userRepository.delete(user);
-	  }
-	
+
+	/**
+	  * ユーザー情報 物理削除
+	  * @param id ユーザーID
+	  */
+	public void delete(Long id) {
+		User user = findById(id);
+		userRepository.delete(user);
+	}
+
 }

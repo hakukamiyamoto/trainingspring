@@ -240,7 +240,7 @@ public class UserController {
 	public ResponseEntity<byte[]> exportUserListToCSV() {
 		try {
 			List<User> userList = userService.searchAll();
-			String csvData = convertToCSV(userList);
+			String csvData = userService.convertToCSV(userList);
 			byte[] csvBytes = csvData.getBytes("Shift_JIS");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.parseMediaType("text/csv"));
@@ -253,21 +253,7 @@ public class UserController {
 		}
 	}
 
-	private String convertToCSV(List<User> userList) {
-		StringBuilder csvData = new StringBuilder();
-		csvData.append("id,名前,住所,電話番号"); // ヘッダー行を追加
-
-		for (User user : userList) {
-			csvData.append("\n");
-			csvData.append(user.getId()).append(",");
-			csvData.append(user.getName()).append(",");
-			csvData.append(user.getAddress()).append(",");
-			csvData.append(user.getPhone()).append(",");
-		}
-
-		return csvData.toString();
-	}
-
+	
 	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
