@@ -286,7 +286,6 @@ public class UserController {
 			// ファイルの内容を読み取るためのInputStreamを作成
 			BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream(), "Shift_JIS"));
 
-			// CSVファイルをパースし、各レコードを取得
 			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 
 			// 取得した全てのレコードに対して登録
