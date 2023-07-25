@@ -29,3 +29,7 @@ table th {
 	gap: 10px;
 	width: 1000px;
 }
+
+.left {
+	text-align: left;
+}

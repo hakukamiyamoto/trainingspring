@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = 'CSVから一括編集', scripts = ~{::script}, links = ~{::link})"></head>
+
+<body>
+	<div class="container">
+		<h1>CSVから一括編集</h1>
+		<br>
+
+		<!--エラーメッセージの表示 -->
+		<div th:if="${errors}" class="text-danger" role="alert">
+			<div th:each="error : ${errors}">
+				<p th:text="${error}"></p>
+			</div>
+		</div>
+		<!--成功メッセージの表示 -->
+		<div th:if="${success}"  role="alert" th:text="${success}"></div>
+
+
+		<div class="left">
+			<form method="POST" action="/upload-csv" enctype="multipart/form-data">
+				<input type="file" name="file" accept=".csv">
+				<button type="submit" value="Upload" class="btn btn-primary">CSVインポート</button>
+			</form>
+		</div>
+
+		<br><br>
+		<div class="text-center">
+			<a href="/user/list" class="btn btn-secondary">一覧に戻る</a>
+		</div>
+	</div>
+</body>
+
+</html>

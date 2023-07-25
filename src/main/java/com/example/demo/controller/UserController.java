@@ -1,9 +1,18 @@
 package com.example.demo.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,12 +22,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.KeywordForm;
 import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
 /**
@@ -32,6 +44,8 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserRepository repository;
 
 	/**
 	 * ユーザー情報一覧画面を表示
@@ -97,30 +111,30 @@ public class UserController {
 	/**
 	 * ユーザー一括登録
 	 * @param bulkUserRequests ユーザー情報のリクエスト
-     * @param result           入力チェック結果のバインディング結果
-     * @param model            モデル
-     * @return ユーザー登録画面
-     */
-    @PostMapping("/user/bulkcreate")
-    public String bulkCreate(@Validated @ModelAttribute BulkUserRequests bulkUserRequests, BindingResult result,
-            Model model) {
-        List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
+	 * @param result           入力チェック結果のバインディング結果
+	 * @param model            モデル
+	 * @return ユーザー登録画面
+	 */
+	@PostMapping("/user/bulkcreate")
+	public String bulkCreate(@Validated @ModelAttribute BulkUserRequests bulkUserRequests, BindingResult result,
+			Model model) {
+		List<UserRequest> userRequests = bulkUserRequests.getUserRequests();
 
-        // 入力チェックエラーの場合
-        if (result.hasErrors()) {
-            List<String> errorList = new ArrayList<String>();
-            for (ObjectError error : result.getAllErrors()) {
-                errorList.add(error.getDefaultMessage());
-            }
-            model.addAttribute("validationError", errorList);
-            return "user/bulkadd";
-        }
+		// 入力チェックエラーの場合
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			return "user/bulkadd";
+		}
 
-        // ユーザーの一括登録処理
-        userService.bulkCreate(userRequests);
+		// ユーザーの一括登録処理
+		userService.bulkCreate(userRequests);
 
-        return "redirect:/user/list";
-    }
+		return "redirect:/user/list";
+	}
 
 	/**
 	 * ユーザー情報詳細画面を表示
@@ -193,7 +207,7 @@ public class UserController {
 	}
 
 	/**
-	 * 検索をするポストリクエスト
+	 * 検索をするリクエスト
 	 * @param keywordForm　キーワードクラス
 	 * @param result
 	 * @param model
@@ -223,6 +237,69 @@ public class UserController {
 		model.addAttribute("userlist", searchResult);
 
 		return "user/search";
+	}
+
+	/**
+	 * ユーザーリストをCSV形式でエクスポートする
+	 *
+	 * @return CSVファイルのバイト配列
+	 * @throws IOException 入出力例外が発生した場合
+	 */
+	@GetMapping("/user/csv")
+	public ResponseEntity<byte[]> exportUserListToCSV() {
+		try {
+			List<User> userList = userService.searchAll();
+			String csvData = userService.convertToCSV(userList);
+			byte[] csvBytes = csvData.getBytes("Shift_JIS");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.parseMediaType("text/csv"));
+			headers.setContentDispositionFormData("attachment", "userlist.csv");
+			headers.setContentLength(csvBytes.length);
+
+			return new ResponseEntity<>(csvBytes, headers, HttpStatus.OK);
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	/**
+	 *  CSVアップロード画面を表示するGETリクエスト
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/user/uploadcsv")
+	public String showUploadPage(Model model) {
+
+		return "user/uploadcsv";
+	}
+
+	/**
+	 * CSVファイルをアップロードして一括変更を行う
+	 * @param file CSVファイル
+	 * @return user/list
+	 * @throws RuntimeException CSVファイルのパースに失敗した場合にスローされます
+	 */
+	@PostMapping("/upload-csv")
+	public String uploadCSV(@RequestParam("file") MultipartFile file, Model model) {
+		List<String> errorMessages = new ArrayList<>();
+		try {
+			// ファイルの内容を読み取るためのInputStreamを作成
+			BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream(), "Shift_JIS"));
+
+			// CSVファイルをパースし、各レコードを取得
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+
+			// 取得した全てのレコードに対して登録
+			userService.parseAndSaveUsers(records, errorMessages);
+		} catch (IOException e) {
+			throw new RuntimeException("CSV file parsing failed.", e);
+		}
+		model.addAttribute("success", "編集を完了しました。");
+
+		if (!errorMessages.isEmpty()) {
+			model.addAttribute("errors", errorMessages);
+		}
+		return "user/uploadcsv";
 	}
 
 	/**

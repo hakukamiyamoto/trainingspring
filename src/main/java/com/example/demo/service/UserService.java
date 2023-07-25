@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,7 +69,7 @@ public class UserService {
 		user.setUpdateDate(new Date());
 		userRepository.save(user);
 	}
-	
+
 	/**
 	 * 指定されたキーワードで住所を前方一致で検索します。
 	 * @param keyword キーワード
@@ -95,28 +97,79 @@ public class UserService {
 		return userRepository.findByAddressContaining(keyword);
 	}
 
-	
-	
-	public void bulkCreate(List<UserRequest> userRequests) {
-	    Date now = new Date();
+	/**
+	 * CSVデータに変換する
+	 * @param userList
+	 * @return
+	 */
+	public String convertToCSV(List<User> userList) {
+		StringBuilder csvData = new StringBuilder();
+		csvData.append("id,名前,住所,電話番号"); // ヘッダー行を追加
 
-	    for (UserRequest userRequest : userRequests) {
-	        User user = new User();
-	        user.setName(userRequest.getName());
-	        user.setAddress(userRequest.getAddress());
-	        user.setPhone(userRequest.getPhone());
-	        user.setCreateDate(now);
-	        user.setUpdateDate(now);
-	        userRepository.save(user);
-	    }
+		for (User user : userList) {
+			csvData.append("\n");
+			csvData.append(user.getId()).append(",");
+			csvData.append(user.getName()).append(",");
+			csvData.append(user.getAddress()).append(",");
+			csvData.append(user.getPhone()).append(",");
+		}
+
+		return csvData.toString();
 	}
-	 /**
-	   * ユーザー情報 物理削除
-	   * @param id ユーザーID
-	   */
-	  public void delete(Long id) {
-	    User user = findById(id);
-	    userRepository.delete(user);
-	  }
-	
+
+	public void bulkCreate(List<UserRequest> userRequests) {
+		Date now = new Date();
+
+		for (UserRequest userRequest : userRequests) {
+			User user = new User();
+			user.setName(userRequest.getName());
+			user.setAddress(userRequest.getAddress());
+			user.setPhone(userRequest.getPhone());
+			user.setCreateDate(now);
+			user.setUpdateDate(now);
+			userRepository.save(user);
+		}
+	}
+
+	/**
+	 * CSVを元にデータを編集する
+	 * @param records
+	 */
+	public void parseAndSaveUsers(Iterable<CSVRecord> records, List<String> errorMessages) {
+		for (CSVRecord record : records) {
+			try {
+				Long id = Long.parseLong(record.get(0));
+				Optional<User> optionalUser = userRepository.findById(id);
+
+				if (optionalUser.isPresent()) {
+					String name = record.get(1);
+					String address = record.get(2);
+					String phone = record.get(3);
+
+					Date now = new Date();
+
+					User user = optionalUser.get();
+					user.setName(name);
+					user.setAddress(address);
+					user.setPhone(phone);
+					user.setUpdateDate(now);
+					userRepository.save(user);
+				} else {
+					errorMessages.add("該当ID（" + id + "）は存在しませんでした。無効な行：" + record);
+				}
+			} catch (NumberFormatException e) {
+				errorMessages.add("CSVファイルのIDフィールドが数値に変換できません。無効な行：" + record);
+			}
+		}
+	}
+
+	/**
+	  * ユーザー情報 物理削除
+	  * @param id ユーザーID
+	  */
+	public void delete(Long id) {
+		User user = findById(id);
+		userRepository.delete(user);
+	}
+
 }
