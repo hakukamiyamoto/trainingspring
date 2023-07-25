@@ -302,6 +302,20 @@ public class UserController {
 	}
 
 	/**
+	 * 複数のユーザー情報を削除
+	 * @param deleteFlags 削除するユーザーIDのリスト
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@PostMapping("/user/mutipledelete")
+	public String deleteMultiple(@RequestParam List<Long> deleteFlags, Model model) {
+	    // ユーザー情報の削除
+	    userService.deleteMultiple(deleteFlags);
+	    return "redirect:/user/list";
+	}
+	
+	
+	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
 	   * @param model Model

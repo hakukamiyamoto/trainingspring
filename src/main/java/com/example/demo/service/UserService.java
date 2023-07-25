@@ -162,6 +162,16 @@ public class UserService {
 			}
 		}
 	}
+	
+	/**
+	 * 複数のユーザー情報を削除
+	 * @param deleteFlags 削除するユーザーIDのリスト
+	 */
+	public void deleteMultiple(List<Long> deleteFlags) {
+	    for (Long id : deleteFlags) {
+	        delete(id);
+	    }
+	}
 
 	/**
 	  * ユーザー情報 物理削除
