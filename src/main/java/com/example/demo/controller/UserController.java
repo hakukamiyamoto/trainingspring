@@ -286,7 +286,6 @@ public class UserController {
 			// ファイルの内容を読み取るためのInputStreamを作成
 			BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream(), "Shift_JIS"));
 
-			// CSVファイルをパースし、各レコードを取得
 			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 
 			// 取得した全てのレコードに対して登録
@@ -302,6 +301,20 @@ public class UserController {
 		return "user/uploadcsv";
 	}
 
+	/**
+	 * 複数のユーザー情報を削除
+	 * @param deleteFlags 削除するユーザーIDのリスト
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@PostMapping("/user/mutipledelete")
+	public String deleteMultiple(@RequestParam List<Long> deleteFlags, Model model) {
+	    // ユーザー情報の削除
+	    userService.deleteMultiple(deleteFlags);
+	    return "redirect:/user/list";
+	}
+	
+	
 	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
