@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -115,7 +117,6 @@ public class UserService {
 		return csvData.toString();
 	}
 
-	
 	public void bulkCreate(List<UserRequest> userRequests) {
 		Date now = new Date();
 
@@ -127,6 +128,38 @@ public class UserService {
 			user.setCreateDate(now);
 			user.setUpdateDate(now);
 			userRepository.save(user);
+		}
+	}
+
+	/**
+	 * CSVを元にデータを編集する
+	 * @param records
+	 */
+	public void parseAndSaveUsers(Iterable<CSVRecord> records, List<String> errorMessages) {
+		for (CSVRecord record : records) {
+			try {
+				Long id = Long.parseLong(record.get(0));
+				Optional<User> optionalUser = userRepository.findById(id);
+
+				if (optionalUser.isPresent()) {
+					String name = record.get(1);
+					String address = record.get(2);
+					String phone = record.get(3);
+
+					Date now = new Date();
+
+					User user = optionalUser.get();
+					user.setName(name);
+					user.setAddress(address);
+					user.setPhone(phone);
+					user.setUpdateDate(now);
+					userRepository.save(user);
+				} else {
+					errorMessages.add("該当ID（" + id + "）は存在しませんでした。無効な行：" + record);
+				}
+			} catch (NumberFormatException e) {
+				errorMessages.add("CSVファイルのIDフィールドが数値に変換できません。無効な行：" + record);
+			}
 		}
 	}
 

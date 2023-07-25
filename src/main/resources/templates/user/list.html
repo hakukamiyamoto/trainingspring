@@ -8,7 +8,10 @@
 		<h1>ユーザー情報一覧</h1>
 		<div class="float-end">
 			<a th:href="@{/user/search}" class="btn btn-secondary">検索</a>
-			<a th:href="@{/user/add}" class="btn btn-primary">新規登録はこちら</a>
+
+			<a th:href="@{/user/uploadcsv}" class="btn btn-primary">CSVから編集</a>
+			
+			<a th:href=" @{/user/add}" class="btn btn-primary">新規登録はこちら</a>
 
 			<a th:href="@{/user/bulkadd}" class="btn btn-primary">一括登録はこちら</a>
 
@@ -40,10 +43,15 @@
 				</tr>
 			</tbody>
 		</table>
-		<form action="/user/csv" method="get" class="text-center">
-			<button type="submit" class="btn btn-primary">CSVエクスポート</button>
-		</form>
+		<div class="text-center">
+			<div style="display: flex; justify-content: space-around;">
+				<form action="/user/csv" method="get">
+					<button type="submit" class="btn btn-primary">CSVエクスポート</button>
+				</form>
+			</div>
+		</div>
 	</div>
+
 
 </body>
 

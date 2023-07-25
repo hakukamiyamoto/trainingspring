@@ -1,9 +1,13 @@
 package com.example.demo.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,12 +22,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.KeywordForm;
 import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
 /**
@@ -37,6 +44,8 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private UserRepository repository;
 
 	/**
 	 * ユーザー情報一覧画面を表示
@@ -198,7 +207,7 @@ public class UserController {
 	}
 
 	/**
-	 * 検索をするポストリクエスト
+	 * 検索をするリクエスト
 	 * @param keywordForm　キーワードクラス
 	 * @param result
 	 * @param model
@@ -253,7 +262,46 @@ public class UserController {
 		}
 	}
 
-	
+	/**
+	 *  CSVアップロード画面を表示するGETリクエスト
+	 * @param model
+	 * @return
+	 */
+	@GetMapping("/user/uploadcsv")
+	public String showUploadPage(Model model) {
+
+		return "user/uploadcsv";
+	}
+
+	/**
+	 * CSVファイルをアップロードして一括変更を行う
+	 * @param file CSVファイル
+	 * @return user/list
+	 * @throws RuntimeException CSVファイルのパースに失敗した場合にスローされます
+	 */
+	@PostMapping("/upload-csv")
+	public String uploadCSV(@RequestParam("file") MultipartFile file, Model model) {
+		List<String> errorMessages = new ArrayList<>();
+		try {
+			// ファイルの内容を読み取るためのInputStreamを作成
+			BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream(), "Shift_JIS"));
+
+			// CSVファイルをパースし、各レコードを取得
+			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+
+			// 取得した全てのレコードに対して登録
+			userService.parseAndSaveUsers(records, errorMessages);
+		} catch (IOException e) {
+			throw new RuntimeException("CSV file parsing failed.", e);
+		}
+		model.addAttribute("success", "編集を完了しました。");
+
+		if (!errorMessages.isEmpty()) {
+			model.addAttribute("errors", errorMessages);
+		}
+		return "user/uploadcsv";
+	}
+
 	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
