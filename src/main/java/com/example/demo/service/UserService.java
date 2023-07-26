@@ -117,9 +117,14 @@ public class UserService {
 		return csvData.toString();
 	}
 
+	
+	/**
+	 * 一括登録する
+	 * @param userRequests
+	 */
 	public void bulkCreate(List<UserRequest> userRequests) {
 		Date now = new Date();
-
+		//TODO 一括INSERTに変更する
 		for (UserRequest userRequest : userRequests) {
 			User user = new User();
 			user.setName(userRequest.getName());

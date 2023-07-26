@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.KeywordForm;
+import com.example.demo.dto.Signin;
 import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
@@ -326,6 +327,16 @@ public class UserController {
 		// ユーザー情報の削除
 		userService.delete(id);
 		return "redirect:/user/list";
+	}
+	
+	/**
+	 * ログインページを表示
+	 *
+	 */
+	@GetMapping("/signin")
+	public String signin(Model model) {
+		model.addAttribute("signin", new Signin());
+	    return "signin/signin";
 	}
 
 }
