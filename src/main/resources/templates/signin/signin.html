@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = 'ログイン', scripts = ~{::script}, links = ~{::link})"></head>
+
+<body>
+	<div class="container">
+		<div th:if="${validationError}" th:each="error : ${validationError}">
+			<label class="text-danger" th:text="${error}"></label>
+		</div>
+		<h1>ログイン</h1>
+		<form th:action="@{/user/userlogin}" th:object="${signin}" th:method="post">
+
+			<div class="form-group">
+				<label>ID</label>
+				<input type="number" th:field="*{id}" class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label>パスワード</label>
+				<input type="password" th:field="*{password}" class="form-control">
+			</div>
+			<br />
+			<div class="text-center">
+				<input type="submit" value="　ログイン　" class="btn btn-primary">
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>
