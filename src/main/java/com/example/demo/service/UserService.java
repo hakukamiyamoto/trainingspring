@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.csv.CSVRecord;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,14 +49,43 @@ public class UserService {
 	  * @param user ユーザー情報
 	  */
 	public void create(UserRequest userRequest) {
+		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		Date now = new Date();
 		User user = new User();
 		user.setName(userRequest.getName());
 		user.setAddress(userRequest.getAddress());
 		user.setPhone(userRequest.getPhone());
+		// パスワードをハッシュ化
+	    String hashedPassword = passwordEncoder.encode(userRequest.getPassword());
+	    user.setPassword(hashedPassword);
 		user.setCreateDate(now);
 		user.setUpdateDate(now);
 		userRepository.save(user);
+	}
+
+	/**
+	 * 一括登録する
+	 * @param userRequests
+	 */
+	@Transactional
+	public void bulkCreate(List<UserRequest> userRequests) {
+		Date now = new Date();
+		List<User> users = new ArrayList<>();
+
+		for (UserRequest userRequest : userRequests) {
+			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+			User user = new User();
+			user.setName(userRequest.getName());
+			user.setAddress(userRequest.getAddress());
+			user.setPhone(userRequest.getPhone());
+			// パスワードをハッシュ化
+		    String hashedPassword = passwordEncoder.encode(userRequest.getPassword());
+		    user.setPassword(hashedPassword);
+			user.setCreateDate(now);
+			user.setUpdateDate(now);
+			users.add(user);
+		}
+		userRepository.saveAll(users);
 	}
 
 	/**
@@ -117,25 +148,6 @@ public class UserService {
 		return csvData.toString();
 	}
 
-	
-	/**
-	 * 一括登録する
-	 * @param userRequests
-	 */
-	public void bulkCreate(List<UserRequest> userRequests) {
-		Date now = new Date();
-		//TODO 一括INSERTに変更する
-		for (UserRequest userRequest : userRequests) {
-			User user = new User();
-			user.setName(userRequest.getName());
-			user.setAddress(userRequest.getAddress());
-			user.setPhone(userRequest.getPhone());
-			user.setCreateDate(now);
-			user.setUpdateDate(now);
-			userRepository.save(user);
-		}
-	}
-
 	/**
 	 * CSVを元にデータを編集する
 	 * @param records
@@ -167,15 +179,15 @@ public class UserService {
 			}
 		}
 	}
-	
+
 	/**
 	 * 複数のユーザー情報を削除
 	 * @param deleteFlags 削除するユーザーIDのリスト
 	 */
 	public void deleteMultiple(List<Long> deleteFlags) {
-	    for (Long id : deleteFlags) {
-	        delete(id);
-	    }
+		for (Long id : deleteFlags) {
+			delete(id);
+		}
 	}
 
 	/**

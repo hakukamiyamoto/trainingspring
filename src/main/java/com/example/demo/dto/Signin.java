@@ -2,7 +2,9 @@ package com.example.demo.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
@@ -15,8 +17,8 @@ public class Signin implements Serializable {
 	/**
 	 * id
 	 */
-	@NotEmpty(message = "IDを入力してください")
-	@Size(max = 100, message = "IDは100桁以内で入力してください")
+	@NotNull(message = "IDを入力してください")
+	@Max(value = 99999, message = "IDは5桁以内で入力してください")
 	private Long id;
 	/**
 	 * パスワード

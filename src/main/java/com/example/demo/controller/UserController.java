@@ -331,12 +331,26 @@ public class UserController {
 	
 	/**
 	 * ログインページを表示
-	 *
+	 *@return ユーザーログイン画面
 	 */
 	@GetMapping("/signin")
 	public String signin(Model model) {
 		model.addAttribute("signin", new Signin());
 	    return "signin/signin";
 	}
-
+	
+	@PostMapping("/usersignin")
+	public String userLogin(@Validated @ModelAttribute Signin signin, BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			// 入力チェックエラーの場合
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			return "signin/signin";
+		}
+	    // ログイン処理
+	    return "redirect:/user/list";
+	}
 }

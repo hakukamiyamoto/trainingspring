@@ -29,4 +29,10 @@ public class UserRequest implements Serializable {
 	 */
 	@Pattern(regexp = "0\\d{1,4}-\\d{1,4}-\\d{4}", message = "電話番号の形式で入力してください")
 	private String phone;
+	/**
+	 * パスワード
+	 */
+	@NotEmpty(message = "パスワードを入力してください")
+	@Size(max = 255, message = "パスワードは255桁以内で入力してください")
+	private String password;
 }
