@@ -26,6 +26,10 @@ public class User implements Serializable {
 	@Column(name = "id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+	
+	@Column(name = "username")
+	private String username;
+	
 	/**
 	 * 名前
 	 */
@@ -62,4 +66,6 @@ public class User implements Serializable {
 	 */
 	@Column(name = "password")
 	private String password;
+
+
 }

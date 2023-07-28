@@ -8,8 +8,15 @@
 		<div th:if="${validationError}" th:each="error : ${validationError}">
 			<label class="text-danger" th:text="${error}"></label>
 		</div>
+		<div th:if="${param.error}" class="text-danger">
+			<p>ユーザーIDかパスワードが違います。</p>
+		</div>
+		<div th:if="${param.logout}" class="text-danger">
+			<p>ログアウトしました。</p>
+		</div>
 		<h1>ログイン</h1>
 		<form th:action="@{/usersignin}" th:object="${signin}" th:method="post">
+			<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
 			<div class="form-group">
 				<label>ID</label>

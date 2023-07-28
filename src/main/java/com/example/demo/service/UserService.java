@@ -53,6 +53,7 @@ public class UserService {
 		Date now = new Date();
 		User user = new User();
 		user.setName(userRequest.getName());
+		user.setUsername(userRequest.getUsername());
 		user.setAddress(userRequest.getAddress());
 		user.setPhone(userRequest.getPhone());
 		// パスワードをハッシュ化
@@ -76,6 +77,7 @@ public class UserService {
 			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			User user = new User();
 			user.setName(userRequest.getName());
+			user.setUsername(userRequest.getUsername());
 			user.setAddress(userRequest.getAddress());
 			user.setPhone(userRequest.getPhone());
 			// パスワードをハッシュ化
@@ -94,6 +96,7 @@ public class UserService {
 	 */
 	public void update(UserUpdateRequest userUpdateRequest) {
 		User user = findById(userUpdateRequest.getId());
+		user.setUsername(userUpdateRequest.getUsername());
 		user.setAddress(userUpdateRequest.getAddress());
 		user.setName(userUpdateRequest.getName());
 		user.setPhone(userUpdateRequest.getPhone());
@@ -140,6 +143,7 @@ public class UserService {
 		for (User user : userList) {
 			csvData.append("\n");
 			csvData.append(user.getId()).append(",");
+			csvData.append(user.getUsername()).append(",");
 			csvData.append(user.getName()).append(",");
 			csvData.append(user.getAddress()).append(",");
 			csvData.append(user.getPhone()).append(",");
@@ -160,13 +164,15 @@ public class UserService {
 
 				if (optionalUser.isPresent()) {
 					String name = record.get(1);
-					String address = record.get(2);
-					String phone = record.get(3);
+					String username = record.get(2);
+					String address = record.get(3);
+					String phone = record.get(4);
 
 					Date now = new Date();
 
 					User user = optionalUser.get();
 					user.setName(name);
+					user.setUsername(username);
 					user.setAddress(address);
 					user.setPhone(phone);
 					user.setUpdateDate(now);

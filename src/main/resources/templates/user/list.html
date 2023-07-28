@@ -20,6 +20,7 @@
 				<thead>
 					<tr>
 						<th>ID</th>
+						<th>ユーザーID</th>
 						<th>名前</th>
 						<th>住所</th>
 						<th>電話番号</th>
@@ -33,6 +34,7 @@
 				<tbody>
 					<tr th:each="user : ${userlist}" th:object="${user}" class="align-middle">
 						<td th:text="*{id}"></td>
+						<td th:text="*{username}"></td>
 						<td th:text="*{name}"></td>
 						<td th:text="*{address}"></td>
 						<td th:text="*{phone}"></td>

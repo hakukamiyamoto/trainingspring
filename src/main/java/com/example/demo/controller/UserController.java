@@ -31,7 +31,6 @@ import com.example.demo.dto.Signin;
 import com.example.demo.dto.UserRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
 /**
@@ -45,8 +44,6 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private UserRepository repository;
 
 	/**
 	 * ユーザー情報一覧画面を表示
@@ -161,6 +158,7 @@ public class UserController {
 		User user = userService.findById(id);
 		UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 		userUpdateRequest.setId(user.getId());
+		userUpdateRequest.setUsername(user.getUsername());
 		userUpdateRequest.setName(user.getName());
 		userUpdateRequest.setPhone(user.getPhone());
 		userUpdateRequest.setAddress(user.getAddress());
