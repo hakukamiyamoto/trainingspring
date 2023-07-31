@@ -25,7 +25,7 @@ public class UserRequest implements Serializable {
 	 */
 	@NotEmpty(message = "ユーザーIDを入力してください")
 	@Size(max = 100, message = "ユーザーIDは100桁以内で入力してください")
-	private String username;
+	private String userid;
 	
 	
 	/**

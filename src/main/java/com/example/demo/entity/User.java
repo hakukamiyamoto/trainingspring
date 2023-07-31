@@ -27,8 +27,11 @@ public class User implements Serializable {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(name = "username")
-	private String username;
+	/**
+	 * ユーザーID
+	 */
+	@Column(name = "userid")
+	private String userid;
 	
 	/**
 	 * 名前

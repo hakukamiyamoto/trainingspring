@@ -16,6 +16,8 @@ import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
+
+
 /**
  * ユーザー情報 Service
  */
@@ -27,6 +29,10 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
 	/**
 	 * ユーザー情報 全検索
@@ -49,16 +55,15 @@ public class UserService {
 	  * @param user ユーザー情報
 	  */
 	public void create(UserRequest userRequest) {
-		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		Date now = new Date();
 		User user = new User();
 		user.setName(userRequest.getName());
-		user.setUsername(userRequest.getUsername());
+		user.setUserid(userRequest.getUserid());
 		user.setAddress(userRequest.getAddress());
 		user.setPhone(userRequest.getPhone());
 		// パスワードをハッシュ化
-	    String hashedPassword = passwordEncoder.encode(userRequest.getPassword());
-	    user.setPassword(hashedPassword);
+		String hashedPassword = bCryptPasswordEncoder.encode(userRequest.getPassword());
+		user.setPassword(hashedPassword);
 		user.setCreateDate(now);
 		user.setUpdateDate(now);
 		userRepository.save(user);
@@ -74,15 +79,14 @@ public class UserService {
 		List<User> users = new ArrayList<>();
 
 		for (UserRequest userRequest : userRequests) {
-			BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 			User user = new User();
 			user.setName(userRequest.getName());
-			user.setUsername(userRequest.getUsername());
+			user.setUserid(userRequest.getUserid());
 			user.setAddress(userRequest.getAddress());
 			user.setPhone(userRequest.getPhone());
 			// パスワードをハッシュ化
-		    String hashedPassword = passwordEncoder.encode(userRequest.getPassword());
-		    user.setPassword(hashedPassword);
+			String hashedPassword = bCryptPasswordEncoder.encode(userRequest.getPassword());
+			user.setPassword(hashedPassword);
 			user.setCreateDate(now);
 			user.setUpdateDate(now);
 			users.add(user);
@@ -96,7 +100,7 @@ public class UserService {
 	 */
 	public void update(UserUpdateRequest userUpdateRequest) {
 		User user = findById(userUpdateRequest.getId());
-		user.setUsername(userUpdateRequest.getUsername());
+		user.setUserid(userUpdateRequest.getUserid());
 		user.setAddress(userUpdateRequest.getAddress());
 		user.setName(userUpdateRequest.getName());
 		user.setPhone(userUpdateRequest.getPhone());
@@ -143,7 +147,7 @@ public class UserService {
 		for (User user : userList) {
 			csvData.append("\n");
 			csvData.append(user.getId()).append(",");
-			csvData.append(user.getUsername()).append(",");
+			csvData.append(user.getUserid()).append(",");
 			csvData.append(user.getName()).append(",");
 			csvData.append(user.getAddress()).append(",");
 			csvData.append(user.getPhone()).append(",");
@@ -164,7 +168,7 @@ public class UserService {
 
 				if (optionalUser.isPresent()) {
 					String name = record.get(1);
-					String username = record.get(2);
+					String userid = record.get(2);
 					String address = record.get(3);
 					String phone = record.get(4);
 
@@ -172,7 +176,7 @@ public class UserService {
 
 					User user = optionalUser.get();
 					user.setName(name);
-					user.setUsername(username);
+					user.setUserid(userid);
 					user.setAddress(address);
 					user.setPhone(phone);
 					user.setUpdateDate(now);

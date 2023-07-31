@@ -9,9 +9,11 @@ import org.springframework.security.core.userdetails.User;
 
 public class CustomUserDetails extends User {
 
-	// username,password,authoritiesを引数に取るコンストラクタを用意
-	public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> authorities) {
-		super(username, password, authorities);
+	// userid,password,authoritiesを引数に取るコンストラクタを用意
+	public CustomUserDetails(String userid, String password, Collection<? extends GrantedAuthority> authorities) {
+		super(userid, password, authorities);
 	}
+
+
 
 }

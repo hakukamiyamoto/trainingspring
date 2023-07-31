@@ -158,7 +158,7 @@ public class UserController {
 		User user = userService.findById(id);
 		UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 		userUpdateRequest.setId(user.getId());
-		userUpdateRequest.setUsername(user.getUsername());
+		userUpdateRequest.setUserid(user.getUserid());
 		userUpdateRequest.setName(user.getName());
 		userUpdateRequest.setPhone(user.getPhone());
 		userUpdateRequest.setAddress(user.getAddress());
@@ -308,12 +308,11 @@ public class UserController {
 	 */
 	@PostMapping("/user/mutipledelete")
 	public String deleteMultiple(@RequestParam List<Long> deleteFlags, Model model) {
-	    // ユーザー情報の削除
-	    userService.deleteMultiple(deleteFlags);
-	    return "redirect:/user/list";
+		// ユーザー情報の削除
+		userService.deleteMultiple(deleteFlags);
+		return "redirect:/user/list";
 	}
-	
-	
+
 	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
@@ -326,29 +325,19 @@ public class UserController {
 		userService.delete(id);
 		return "redirect:/user/list";
 	}
-	
+
 	/**
 	 * ログインページを表示
 	 *@return ユーザーログイン画面
 	 */
 	@GetMapping("/signin")
-	public String signin(Model model) {
-		model.addAttribute("signin", new Signin());
+	public String signin(Model model, @RequestParam(value = "failed", required = false) String failed) {
+	    if (failed != null) {
+	        model.addAttribute("errorMessage", "ユーザー名またはパスワードが違います。");
+	    }
+	    model.addAttribute("signin", new Signin());
 	    return "signin/signin";
 	}
-	
-	@PostMapping("/usersignin")
-	public String userLogin(@Validated @ModelAttribute Signin signin, BindingResult result, Model model) {
-		if (result.hasErrors()) {
-			// 入力チェックエラーの場合
-			List<String> errorList = new ArrayList<String>();
-			for (ObjectError error : result.getAllErrors()) {
-				errorList.add(error.getDefaultMessage());
-			}
-			model.addAttribute("validationError", errorList);
-			return "signin/signin";
-		}
-	    // ログイン処理
-	    return "redirect:/user/list";
-	}
+
+
 }

@@ -31,6 +31,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	 * nameからuserを特定
 	 * @return User
 	 */
-	public User findByName(String username);
+	public User findByUserid(String userid);
 
 }

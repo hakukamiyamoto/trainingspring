@@ -20,9 +20,9 @@ public class SecurityConfig {
 		// ログインに関する設定。
 
 		http.formLogin(login -> login
-				.loginProcessingUrl("/signin").permitAll() //ログインのURL
+				.loginProcessingUrl("/usersignin").permitAll() //ログインのURL
 				.loginPage("/signin").permitAll()
-				.usernameParameter("userid")
+				.usernameParameter("username")
 				.passwordParameter("password")
 				.failureUrl("/signin?failed")
 				.defaultSuccessUrl("/user/list")
@@ -36,7 +36,7 @@ public class SecurityConfig {
 
 		// URLごとの認可設定を下記で行う。
 		).authorizeHttpRequests(authz -> authz
-				.mvcMatchers("/login/**", "/user/**", "/rest/**","/signin/**", "/usersignin/**","/signin?failed","/img/**", "/css/**", "/js/**").permitAll()
+				.mvcMatchers("/login/**", "/rest/**","/user/add/**","/user/create/**","/signin/**", "/usersignin/**","/signin?failed","/img/**", "/css/**", "/js/**").permitAll()
 				.anyRequest().authenticated());
 
 		// Bean登録
