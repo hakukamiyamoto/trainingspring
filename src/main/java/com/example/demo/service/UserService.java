@@ -16,8 +16,6 @@ import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
-
-
 /**
  * ユーザー情報 Service
  */
@@ -29,10 +27,9 @@ public class UserService {
 	 */
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
-
 
 	/**
 	 * ユーザー情報 全検索
@@ -55,6 +52,12 @@ public class UserService {
 	  * @param user ユーザー情報
 	  */
 	public void create(UserRequest userRequest) {
+
+		User existingUser = userRepository.findByUserid(userRequest.getUserid());
+		if (existingUser != null) {
+			throw new IllegalArgumentException("User ID already exists");
+		}
+
 		Date now = new Date();
 		User user = new User();
 		user.setName(userRequest.getName());
@@ -71,14 +74,24 @@ public class UserService {
 
 	/**
 	 * 一括登録する
-	 * @param userRequests
+	 * @param userRequests ユーザーリクエストのリスト
 	 */
 	@Transactional
 	public void bulkCreate(List<UserRequest> userRequests) {
 		Date now = new Date();
 		List<User> users = new ArrayList<>();
 
+		// 一括登録対象のユーザーIDをチェックし、既存のユーザーIDと重複していないか確認
 		for (UserRequest userRequest : userRequests) {
+			// 一括登録対象のユーザーIDが既存のユーザーIDと重複していないか確認
+			if (userRepository.findByUserid(userRequest.getUserid()) != null) {
+				throw new RuntimeException("ユーザーIDが既に存在します: " + userRequest.getUserid());
+			}
+			// 一括登録対象のユーザーIDがリスト内の他のユーザーIDと重複していないか確認
+			if (users.stream().anyMatch(u -> u.getUserid().equals(userRequest.getUserid()))) {
+				throw new RuntimeException("同一のユーザーIDがリスト内に存在します: " + userRequest.getUserid());
+			}
+
 			User user = new User();
 			user.setName(userRequest.getName());
 			user.setUserid(userRequest.getUserid());
@@ -91,6 +104,7 @@ public class UserService {
 			user.setUpdateDate(now);
 			users.add(user);
 		}
+
 		userRepository.saveAll(users);
 	}
 

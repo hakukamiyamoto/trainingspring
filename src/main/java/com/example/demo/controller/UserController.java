@@ -128,8 +128,13 @@ public class UserController {
 			return "user/bulkadd";
 		}
 
-		// ユーザーの一括登録処理
-		userService.bulkCreate(userRequests);
+		try {
+			// ユーザーの一括登録処理
+			userService.bulkCreate(userRequests);
+		} catch (RuntimeException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "user/bulkadd";
+		}
 
 		return "redirect:/user/list";
 	}
@@ -332,12 +337,11 @@ public class UserController {
 	 */
 	@GetMapping("/signin")
 	public String signin(Model model, @RequestParam(value = "failed", required = false) String failed) {
-	    if (failed != null) {
-	        model.addAttribute("errorMessage", "ユーザー名またはパスワードが違います。");
-	    }
-	    model.addAttribute("signin", new Signin());
-	    return "signin/signin";
+		if (failed != null) {
+			model.addAttribute("errorMessage", "ユーザー名またはパスワードが違います。");
+		}
+		model.addAttribute("signin", new Signin());
+		return "signin/signin";
 	}
-
 
 }
