@@ -1,4 +1,4 @@
-package com.example.authentication;
+package com.example.demo.authentication;
 
 import java.util.Collection;
 
