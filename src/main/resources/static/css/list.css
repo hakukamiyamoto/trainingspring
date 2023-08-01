@@ -33,3 +33,9 @@ table th {
 .left {
 	text-align: left;
 }
+
+.vertical-align-middle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

@@ -29,6 +29,7 @@ import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.KeywordForm;
 import com.example.demo.dto.Signin;
 import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserSearchRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
@@ -163,10 +164,11 @@ public class UserController {
 		User user = userService.findById(id);
 		UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 		userUpdateRequest.setId(user.getId());
-		userUpdateRequest.setUserid(user.getUserid());
+		userUpdateRequest.setUsername(user.getUsername());
 		userUpdateRequest.setName(user.getName());
 		userUpdateRequest.setPhone(user.getPhone());
 		userUpdateRequest.setAddress(user.getAddress());
+		
 		model.addAttribute("userUpdateRequest", userUpdateRequest);
 		return "user/edit";
 	}
@@ -195,6 +197,31 @@ public class UserController {
 		userService.update(userUpdateRequest);
 		return String.format("redirect:/user/%d", userUpdateRequest.getId());
 	}
+	
+	
+	/**
+	   * ユーザーID検索画面を表示
+	   * @param model Model
+	   * @return ユーザー情報一覧画面
+	   */
+	  @GetMapping(value = "/user/idsearch")
+	  public String displaySearch(Model model) {
+	    model.addAttribute("userSearchRequest", new UserSearchRequest());
+	    return "user/idsearch";
+	  }
+	  
+	  /**
+	   * ユーザーID情報検索
+	   * @param userSearchRequest リクエストデータ
+	   * @param model Model
+	   * @return ユーザー情報一覧画面
+	   */
+	  @PostMapping("/user/id_search")
+	  public String search(@ModelAttribute UserSearchRequest userSearchRequest, Model model) {
+	    User user = userService.search(userSearchRequest);
+	    model.addAttribute("userinfo", user);
+	    return "user/idsearch";
+	  }
 
 	/**
 	 *  検索画面を表示するGETリクエスト

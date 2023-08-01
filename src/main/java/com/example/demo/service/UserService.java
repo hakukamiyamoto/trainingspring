@@ -12,9 +12,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserSearchRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
+import com.example.demo.repository.UserMapper;
 import com.example.demo.repository.UserRepository;
+
 
 /**
  * ユーザー情報 Service
@@ -53,7 +56,7 @@ public class UserService {
 	  */
 	public void create(UserRequest userRequest) {
 
-		User existingUser = userRepository.findByUserid(userRequest.getUserid());
+		User existingUser = userRepository.findByUsername(userRequest.getUsername());
 		if (existingUser != null) {
 			throw new IllegalArgumentException("User ID already exists");
 		}
@@ -61,7 +64,7 @@ public class UserService {
 		Date now = new Date();
 		User user = new User();
 		user.setName(userRequest.getName());
-		user.setUserid(userRequest.getUserid());
+		user.setUsername(userRequest.getUsername());
 		user.setAddress(userRequest.getAddress());
 		user.setPhone(userRequest.getPhone());
 		// パスワードをハッシュ化
@@ -84,17 +87,17 @@ public class UserService {
 		// 一括登録対象のユーザーIDをチェックし、既存のユーザーIDと重複していないか確認
 		for (UserRequest userRequest : userRequests) {
 			// 一括登録対象のユーザーIDが既存のユーザーIDと重複していないか確認
-			if (userRepository.findByUserid(userRequest.getUserid()) != null) {
-				throw new RuntimeException("ユーザーIDが既に存在します: " + userRequest.getUserid());
+			if (userRepository.findByUsername(userRequest.getUsername()) != null) {
+				throw new RuntimeException("ユーザーIDが既に存在します: " + userRequest.getUsername());
 			}
 			// 一括登録対象のユーザーIDがリスト内の他のユーザーIDと重複していないか確認
-			if (users.stream().anyMatch(u -> u.getUserid().equals(userRequest.getUserid()))) {
-				throw new RuntimeException("同一のユーザーIDがリスト内に存在します: " + userRequest.getUserid());
+			if (users.stream().anyMatch(u -> u.getUsername().equals(userRequest.getUsername()))) {
+				throw new RuntimeException("同一のユーザーIDがリスト内に存在します: " + userRequest.getUsername());
 			}
 
 			User user = new User();
 			user.setName(userRequest.getName());
-			user.setUserid(userRequest.getUserid());
+			user.setUsername(userRequest.getUsername());
 			user.setAddress(userRequest.getAddress());
 			user.setPhone(userRequest.getPhone());
 			// パスワードをハッシュ化
@@ -114,10 +117,11 @@ public class UserService {
 	 */
 	public void update(UserUpdateRequest userUpdateRequest) {
 		User user = findById(userUpdateRequest.getId());
-		user.setUserid(userUpdateRequest.getUserid());
+		user.setUsername(userUpdateRequest.getUsername());
 		user.setAddress(userUpdateRequest.getAddress());
 		user.setName(userUpdateRequest.getName());
 		user.setPhone(userUpdateRequest.getPhone());
+		user.setPassword(userUpdateRequest.getPassword());
 		user.setUpdateDate(new Date());
 		userRepository.save(user);
 	}
@@ -148,6 +152,21 @@ public class UserService {
 	public List<User> searchByAddressContaining(String keyword) {
 		return userRepository.findByAddressContaining(keyword);
 	}
+	
+	/**
+     * ユーザー情報 Mapper
+     */
+    @Autowired
+    private UserMapper userMapper;
+
+    /**
+     * ユーザー情報検索
+　　　* @param userSearchRequest リクエストデータ
+     * @return 検索結果
+     */
+    public User search(UserSearchRequest userSearchRequest) {
+        return userMapper.search(userSearchRequest);
+    }
 
 	/**
 	 * CSVデータに変換する
@@ -161,7 +180,7 @@ public class UserService {
 		for (User user : userList) {
 			csvData.append("\n");
 			csvData.append(user.getId()).append(",");
-			csvData.append(user.getUserid()).append(",");
+			csvData.append(user.getUsername()).append(",");
 			csvData.append(user.getName()).append(",");
 			csvData.append(user.getAddress()).append(",");
 			csvData.append(user.getPhone()).append(",");
@@ -190,7 +209,7 @@ public class UserService {
 
 					User user = optionalUser.get();
 					user.setName(name);
-					user.setUserid(userid);
+					user.setUsername(userid);
 					user.setAddress(address);
 					user.setPhone(phone);
 					user.setUpdateDate(now);

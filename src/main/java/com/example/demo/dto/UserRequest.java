@@ -26,7 +26,7 @@ public class UserRequest implements Serializable {
 	@NotEmpty(message = "ユーザーIDを入力してください")
 	@Size(max = 100, message = "ユーザーIDは100桁以内で入力してください")
 	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "ユーザーIDは英数字のみである必要があります")
-	private String userid;
+	private String username;
 	
 	
 	/**

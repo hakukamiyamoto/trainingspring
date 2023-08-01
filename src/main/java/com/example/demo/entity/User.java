@@ -30,8 +30,8 @@ public class User implements Serializable {
 	/**
 	 * ユーザーID
 	 */
-	@Column(name = "userid")
-	private String userid;
+	@Column(name = "username")
+	private String username;
 	
 	/**
 	 * 名前

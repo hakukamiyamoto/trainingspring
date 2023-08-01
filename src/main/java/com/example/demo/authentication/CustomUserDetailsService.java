@@ -22,13 +22,13 @@ public class CustomUserDetailsService implements UserDetailsService{
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String userid) throws UsernameNotFoundException {
-        User user = userRepository.findByUserid(userid);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
         if(user == null) {
             throw new UsernameNotFoundException("user not found");
         }
         // Userエンティティからusernameとpasswordを取り出す
-        String useridFromUser = user.getUserid();
+        String useridFromUser = user.getUsername();
         String passwordFromUser = user.getPassword();
         // ここでは全てのユーザーに対して同じ権限（"ROLE_USER"）を付与しています。
         // 実際のアプリケーションでは、ユーザーの種類によって異なる権限を付与する必要があるかもしれません。
