@@ -307,10 +307,10 @@ public class UserController {
 	/**
 	 * CSVファイルをアップロードして一括変更を行う
 	 * @param file CSVファイル
-	 * @return user/list
+	 * @return user/uploadcsv
 	 * @throws RuntimeException CSVファイルのパースに失敗した場合にスローされます
 	 */
-	@PostMapping("/upload-csv")
+	@PostMapping("/user/upload-csv")
 	public String uploadCSV(@RequestParam("file") MultipartFile file, Model model) {
 		List<String> errorMessages = new ArrayList<>();
 		try {

@@ -1,9 +1,77 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <mapper namespace="com.example.demo.repository.UserMapper">
-    <select id="search" resultType="com.example.demo.entity.User">
-        SELECT * FROM user WHERE id = #{id}
-    </select>
+
+	<select id="searchAll" resultType="com.example.demo.entity.User">
+		SELECT * FROM user
+	</select>
+
+	<select id="findById" parameterType="long"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE id = #{id}
+	</select>
+
+	<select id="findByUsername" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE username = #{username}
+	</select>
+
+	<select id="findByAddressStartingWith" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE address LIKE CONCAT(#{address},
+		'%')
+	</select>
+
+	<select id="findByAddressEndingWith" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE address LIKE CONCAT('%',
+		#{address})
+	</select>
+
+	<select id="findByAddressContaining" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE address LIKE CONCAT('%',
+		#{address}, '%')
+	</select>
+
+	<insert id="insert" parameterType="com.example.demo.entity.User">
+		INSERT INTO user(username, name, address, phone, password, create_date,
+		update_date)
+		VALUES(#{username}, #{name}, #{address}, #{phone}, #{password}, NOW(),
+		NOW())
+	</insert>
+
+	<insert id="bulkInsert" parameterType="java.util.List">
+		INSERT INTO user(username, name, address, phone, password, create_date,
+		update_date)
+		VALUES
+		<foreach collection="list" item="user" separator=",">
+			(#{user.username}, #{user.name}, #{user.address}, #{user.phone},
+			#{user.password}, NOW(), NOW())
+		</foreach>
+	</insert>
+
+	<update id="update" parameterType="com.example.demo.entity.User">
+		UPDATE user
+		SET username =
+		#{username}, name = #{name}, address = #{address}, phone =
+		#{phone},
+		password = #{password}, update_date = NOW()
+		WHERE id = #{id}
+	</update>
+
+	<select id="search"
+		parameterType="com.example.demo.dto.UserSearchRequest"
+		resultType="com.example.demo.entity.User">
+		<!-- The actual query should be written here based on the criteria in UserSearchRequest -->
+	</select>
+
+	<delete id="delete" parameterType="com.example.demo.entity.User">
+		DELETE FROM user WHERE id =
+		#{id}
+	</delete>
+
 </mapper>

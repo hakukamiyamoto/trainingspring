@@ -12,18 +12,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.UserMapper;
 
 @Service
-public class CustomUserDetailsService implements UserDetailsService{
+public class CustomUserDetailsService implements UserDetailsService {
 	
-	// DBにアクセスするリポジトリを作成する。コードは後述する。
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByUsername(username);
+        User user = userMapper.findByUsername(username);
         if(user == null) {
             throw new UsernameNotFoundException("user not found");
         }
@@ -37,7 +36,4 @@ public class CustomUserDetailsService implements UserDetailsService{
         CustomUserDetails customUserDetails = new CustomUserDetails(useridFromUser, passwordFromUser, authorities);
         return customUserDetails;
     }
-
-
 }
-

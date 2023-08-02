@@ -39,7 +39,7 @@ public class UserService {
 	 * @return 検索結果
 	 */
 	public List<User> searchAll() {
-		return userRepository.findAll();
+		return userMapper.searchAll();
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class UserService {
 	 * @return 検索結果
 	 */
 	public User findById(Long id) {
-		return userRepository.findById(id).get();
+		return userMapper.findById(id);
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class UserService {
 		user.setPassword(hashedPassword);
 		user.setCreateDate(now);
 		user.setUpdateDate(now);
-		userRepository.save(user);
+		userMapper.insert(user);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class UserService {
 		// 一括登録対象のユーザーIDをチェックし、既存のユーザーIDと重複していないか確認
 		for (UserRequest userRequest : userRequests) {
 			// 一括登録対象のユーザーIDが既存のユーザーIDと重複していないか確認
-			if (userRepository.findByUsername(userRequest.getUsername()) != null) {
+			if (userMapper.findByUsername(userRequest.getUsername()) != null) {
 				throw new RuntimeException("ユーザーIDが既に存在します: " + userRequest.getUsername());
 			}
 			// 一括登録対象のユーザーIDがリスト内の他のユーザーIDと重複していないか確認
@@ -108,7 +108,7 @@ public class UserService {
 			users.add(user);
 		}
 
-		userRepository.saveAll(users);
+		userMapper.bulkInsert(users);
 	}
 
 	/**
@@ -123,7 +123,7 @@ public class UserService {
 		user.setPhone(userUpdateRequest.getPhone());
 		user.setPassword(userUpdateRequest.getPassword());
 		user.setUpdateDate(new Date());
-		userRepository.save(user);
+		userMapper.insert(user);
 	}
 
 	/**
@@ -132,7 +132,7 @@ public class UserService {
 	 * @return 検索結果のユーザー情報リスト
 	 */
 	public List<User> searchByAddressStartingWith(String keyword) {
-		return userRepository.findByAddressStartingWith(keyword);
+		return userMapper.findByAddressStartingWith(keyword);
 	}
 
 	/**
@@ -141,7 +141,7 @@ public class UserService {
 	 * @return 検索結果のユーザー情報リスト
 	 */
 	public List<User> searchByAddressEndingWith(String keyword) {
-		return userRepository.findByAddressEndingWith(keyword);
+		return userMapper.findByAddressEndingWith(keyword);
 	}
 
 	/**
@@ -150,7 +150,7 @@ public class UserService {
 	 * @return 検索結果のユーザー情報リスト
 	 */
 	public List<User> searchByAddressContaining(String keyword) {
-		return userRepository.findByAddressContaining(keyword);
+		return userMapper.findByAddressContaining(keyword);
 	}
 	
 	/**
@@ -194,34 +194,37 @@ public class UserService {
 	 * @param records
 	 */
 	public void parseAndSaveUsers(Iterable<CSVRecord> records, List<String> errorMessages) {
-		for (CSVRecord record : records) {
-			try {
-				Long id = Long.parseLong(record.get(0));
-				Optional<User> optionalUser = userRepository.findById(id);
+	    int count = 0;
+	    for (CSVRecord record : records) {
+	        try {
+	            count++;
+	            Long id = Long.parseLong(record.get(0));
+	            Optional<User> optionalUser = Optional.ofNullable(userMapper.findById(id));
 
-				if (optionalUser.isPresent()) {
-					String name = record.get(1);
-					String userid = record.get(2);
-					String address = record.get(3);
-					String phone = record.get(4);
+	            if (optionalUser.isPresent()) {
+	                String username = record.get(1);
+	                String name = record.get(2);
+	                String address = record.get(3);
+	                String phone = record.get(4);
 
-					Date now = new Date();
+	                Date now = new Date();
 
-					User user = optionalUser.get();
-					user.setName(name);
-					user.setUsername(userid);
-					user.setAddress(address);
-					user.setPhone(phone);
-					user.setUpdateDate(now);
-					userRepository.save(user);
-				} else {
-					errorMessages.add("該当ID（" + id + "）は存在しませんでした。無効な行：" + record);
-				}
-			} catch (NumberFormatException e) {
-				errorMessages.add("CSVファイルのIDフィールドが数値に変換できません。無効な行：" + record);
-			}
-		}
+	                User user = optionalUser.get();
+	                user.setUsername(username);
+	                user.setName(name);
+	                user.setAddress(address);
+	                user.setPhone(phone);
+	                user.setUpdateDate(now);
+	                userMapper.update(user);  
+	            } else {
+	                errorMessages.add("該当ID（" + id + "）は存在しませんでした。スキップされた行：" + record);
+	            }
+	        } catch (NumberFormatException e) {
+	            errorMessages.add(count + "行目のIDが数値が無効でした。スキップされた行：" + record);
+	        }
+	    }
 	}
+
 
 	/**
 	 * 複数のユーザー情報を削除
@@ -239,7 +242,7 @@ public class UserService {
 	  */
 	public void delete(Long id) {
 		User user = findById(id);
-		userRepository.delete(user);
+		userMapper.delete(user);
 	}
 
 }
