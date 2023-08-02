@@ -175,7 +175,7 @@ public class UserService {
 	 */
 	public String convertToCSV(List<User> userList) {
 		StringBuilder csvData = new StringBuilder();
-		csvData.append("id,名前,住所,電話番号"); // ヘッダー行を追加
+		csvData.append("id,ユーザーID,名前,住所,電話番号"); // ヘッダー行を追加
 
 		for (User user : userList) {
 			csvData.append("\n");
