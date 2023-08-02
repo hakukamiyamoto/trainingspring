@@ -16,7 +16,6 @@ import com.example.demo.dto.UserSearchRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserMapper;
-import com.example.demo.repository.UserRepository;
 
 
 /**
@@ -28,11 +27,15 @@ public class UserService {
 	/**
 	 * ユーザー情報 Repository
 	 */
-	@Autowired
-	private UserRepository userRepository;
 
 	@Autowired
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	/**
+     * ユーザー情報 Mapper
+     */
+    @Autowired
+    private UserMapper userMapper;
 
 	/**
 	 * ユーザー情報 全検索
@@ -56,7 +59,7 @@ public class UserService {
 	  */
 	public void create(UserRequest userRequest) {
 
-		User existingUser = userRepository.findByUsername(userRequest.getUsername());
+		User existingUser = userMapper.findByUsername(userRequest.getUsername());
 		if (existingUser != null) {
 			throw new IllegalArgumentException("User ID already exists");
 		}
@@ -153,11 +156,6 @@ public class UserService {
 		return userMapper.findByAddressContaining(keyword);
 	}
 	
-	/**
-     * ユーザー情報 Mapper
-     */
-    @Autowired
-    private UserMapper userMapper;
 
     /**
      * ユーザー情報検索
