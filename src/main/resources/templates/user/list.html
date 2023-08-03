@@ -53,9 +53,16 @@
 
 			</div>
 		</form>
-		<form action="/user/csv" method="get">
-			<button type="submit" class="btn btn-primary" >CSVエクスポート</button>
+		<form th:action="@{/user/csv}" th:method="get">
+			<button type="submit" class="btn btn-primary">CSVエクスポート</button>
 		</form>
+		<br>
+		<div class="float-end">
+			<form th:action="@{/signout}" th:method="post">
+				<input type="submit" value="Logout">
+				<input type="hidden" name="_csrf" value="${_csrf.token}" />
+			</form>
+		</div>
 	</div>
 
 

@@ -168,7 +168,7 @@ public class UserController {
 		userUpdateRequest.setName(user.getName());
 		userUpdateRequest.setPhone(user.getPhone());
 		userUpdateRequest.setAddress(user.getAddress());
-		
+
 		model.addAttribute("userUpdateRequest", userUpdateRequest);
 		return "user/edit";
 	}
@@ -197,31 +197,30 @@ public class UserController {
 		userService.update(userUpdateRequest);
 		return String.format("redirect:/user/%d", userUpdateRequest.getId());
 	}
-	
-	
+
 	/**
 	   * ユーザーID検索画面を表示
 	   * @param model Model
 	   * @return ユーザー情報一覧画面
 	   */
-	  @GetMapping(value = "/user/idsearch")
-	  public String displaySearch(Model model) {
-	    model.addAttribute("userSearchRequest", new UserSearchRequest());
-	    return "user/idsearch";
-	  }
-	  
-	  /**
-	   * ユーザーID情報検索
-	   * @param userSearchRequest リクエストデータ
-	   * @param model Model
-	   * @return ユーザー情報一覧画面
-	   */
-	  @PostMapping("/user/id_search")
-	  public String search(@ModelAttribute UserSearchRequest userSearchRequest, Model model) {
-	    User user = userService.search(userSearchRequest);
-	    model.addAttribute("userinfo", user);
-	    return "user/idsearch";
-	  }
+	@GetMapping(value = "/user/idsearch")
+	public String displaySearch(Model model) {
+		model.addAttribute("userSearchRequest", new UserSearchRequest());
+		return "user/idsearch";
+	}
+
+	/**
+	 * ユーザーID情報検索
+	 * @param userSearchRequest リクエストデータ
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@PostMapping("/user/id_search")
+	public String search(@ModelAttribute UserSearchRequest userSearchRequest, Model model) {
+		User user = userService.search(userSearchRequest);
+		model.addAttribute("userinfo", user);
+		return "user/idsearch";
+	}
 
 	/**
 	 *  検索画面を表示するGETリクエスト
@@ -371,4 +370,9 @@ public class UserController {
 		return "signin/signin";
 	}
 
+	@PostMapping("/signout")
+	public String logout() {
+
+		return "redirect:/signin"; // リダイレクト先
+	}
 }
