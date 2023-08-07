@@ -60,6 +60,11 @@ public interface UserMapper {
      * @return ユーザー情報のリスト
      */
     List<User> findByAddressContaining(String address);
+    
+    List<User> findByNameStartingWith(String name);
+    List<User> findByNameEndingWith(String name);
+    List<User> findByNameContaining(String name);
+    
 
     /**
      * ユーザー情報を新規に登録します。

@@ -41,6 +41,26 @@
 		SELECT * FROM user WHERE address LIKE CONCAT('%',
 		#{address}, '%')
 	</select>
+	
+	
+	<select id="findByNameStartingWith" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE name LIKE CONCAT(#{name},
+		'%')
+	</select>
+	
+	<select id="findByNameEndingWith" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE name LIKE CONCAT('%',
+		#{name})
+	</select>
+	
+	
+	<select id="findByNameContaining" parameterType="string"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE name LIKE CONCAT('%',
+		#{name}, '%')
+	</select>
 
 	<insert id="insert" parameterType="com.example.demo.entity.User">
 		INSERT INTO user(username,

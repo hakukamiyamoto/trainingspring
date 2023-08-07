@@ -249,38 +249,74 @@ public class UserController {
 		return "user/search";
 	}
 
-	/**
-	 * 検索をするリクエスト
-	 * @param keywordForm　キーワードクラス
-	 * @param result
-	 * @param model
-	 * @return　user/search
-	 */
-	@PostMapping("/user/search")
-	public String search(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
-		if (result.hasErrors()) {
-			model.addAttribute("errorMessage", "キーワードを入力してください。");
-			return "user/search";
-		}
-		String keyword = keywordForm.getKeyword();
-		String searchType = keywordForm.getSearchType();
+	// 名前での検索
+	@PostMapping("/user/search/name")
+	public String searchByName(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
+	    if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "入力エラーがあります。");
+	        return "user/search";
+	    }
 
-		List<User> searchResult;
-		if ("fromStart".equals(searchType)) {
-			searchResult = userService.searchByAddressStartingWith(keyword);
-		} else if ("endWith".equals(searchType)) {
-			searchResult = userService.searchByAddressEndingWith(keyword);
-		} else if ("including".equals(searchType)) {
-			searchResult = userService.searchByAddressContaining(keyword);
-		} else {
-			model.addAttribute("errorMessage", "不正な検索タイプです。");
-			return "user/search";
-		}
+	    String nameKeyword = keywordForm.getNameKeyword();
+	    if (nameKeyword == null || nameKeyword.isEmpty()) {
+	        model.addAttribute("errorMessage", "名前を入力してください。");
+	        return "user/search";
+	    }
 
-		model.addAttribute("userlist", searchResult);
+	    String searchType = keywordForm.getNameSearchType();  // <-- 名前用のsearchTypeに変更
+	    List<User> nameSearchResult;
 
-		return "user/search";
+	    switch (searchType) {
+	        case "fromStart":
+	            nameSearchResult = userService.searchByNameStartingWith(nameKeyword);
+	            break;
+	        case "endWith":
+	            nameSearchResult = userService.searchByNameEndingWith(nameKeyword);
+	            break;
+	        case "including":
+	        default:
+	            nameSearchResult = userService.searchByNameContaining(nameKeyword);
+	            break;
+	    }
+
+	    model.addAttribute("userlist", nameSearchResult);
+	    return "user/search";
 	}
+
+	// 住所検索をするリクエスト
+	@PostMapping("/user/search/address")
+	public String searchByAdress(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
+	    if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "入力エラーがあります。");
+	        return "user/search";
+	    }
+
+	    String addressKeyword = keywordForm.getAddressKeyword();
+	    if (addressKeyword == null || addressKeyword.isEmpty()) {
+	        model.addAttribute("errorMessage", "住所を入力してください。");
+	        return "user/search";
+	    }
+
+	    String searchType = keywordForm.getAddressSearchType();  // <-- 住所用のsearchTypeに変更
+	    List<User> addressSearchResult;
+
+	    switch (searchType) {
+	        case "fromStart":
+	            addressSearchResult = userService.searchByAddressStartingWith(addressKeyword);
+	            break;
+	        case "endWith":
+	            addressSearchResult = userService.searchByAddressEndingWith(addressKeyword);
+	            break;
+	        case "including":
+	        default:
+	            addressSearchResult = userService.searchByAddressContaining(addressKeyword);
+	            break;
+	    }
+
+	    model.addAttribute("userlist", addressSearchResult);
+	    return "user/search";
+	}
+
 
 	/**
 	 * ユーザーリストをCSV形式でエクスポートする

@@ -156,6 +156,34 @@ public class UserService {
 		return userMapper.findByAddressContaining(keyword);
 	}
 	
+	
+	/**
+	 * 指定されたキーワードで住所を前方一致で検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByNameStartingWith(String keyword) {
+		return userMapper.findByNameStartingWith(keyword);
+	}
+
+	/**
+	 * 指定されたキーワードで住所を末尾一致で検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByNameEndingWith(String keyword) {
+		return userMapper.findByNameEndingWith(keyword);
+	}
+
+	/**
+	 * 指定されたキーワードを住所に含むユーザー情報を検索します。
+	 * @param keyword キーワード
+	 * @return 検索結果のユーザー情報リスト
+	 */
+	public List<User> searchByNameContaining(String keyword) {
+		return userMapper.findByNameContaining(keyword);
+	}
+	
 
     /**
      * ユーザー情報検索
