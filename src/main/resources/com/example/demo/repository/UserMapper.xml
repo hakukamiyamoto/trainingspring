@@ -9,6 +9,12 @@
 		SELECT * FROM user
 	</select>
 
+	<select id="findWhereDeleteDateIsNull"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE delete_date IS NULL
+	</select>
+
+
 	<select id="findById" parameterType="long"
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE id = #{id}
@@ -21,7 +27,8 @@
 
 
 	<select id="showName" parameterType="string" resultType="string">
-		SELECT name FROM user WHERE username = #{username}
+		SELECT
+		name FROM user WHERE username = #{username}
 	</select>
 
 	<select id="findByAddressStartingWith" parameterType="string"
@@ -41,21 +48,21 @@
 		SELECT * FROM user WHERE address LIKE CONCAT('%',
 		#{address}, '%')
 	</select>
-	
-	
+
+
 	<select id="findByNameStartingWith" parameterType="string"
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE name LIKE CONCAT(#{name},
 		'%')
 	</select>
-	
+
 	<select id="findByNameEndingWith" parameterType="string"
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE name LIKE CONCAT('%',
 		#{name})
 	</select>
-	
-	
+
+
 	<select id="findByNameContaining" parameterType="string"
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE name LIKE CONCAT('%',

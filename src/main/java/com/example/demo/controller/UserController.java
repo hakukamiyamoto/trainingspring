@@ -66,7 +66,7 @@ public class UserController {
 	public String displayList(Model model, Principal principal) {
 		String loggedInUserName = principal.getName();
 		model.addAttribute("username", loggedInUserName);
-		List<User> userlist = userService.searchAll();
+		List<User> userlist = userService.findActiveUsers();
 		model.addAttribute("userlist", userlist);
 		return "user/list";
 	}

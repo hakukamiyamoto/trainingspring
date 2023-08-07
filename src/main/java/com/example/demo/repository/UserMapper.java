@@ -18,6 +18,13 @@ public interface UserMapper {
      * @return ユーザー情報のリスト
      */
     List<User> searchAll();
+    
+    
+    /**
+	  * 論理削除されていないユーザーを取得
+	  * @return List<User>
+	  */
+    List<User> findWhereDeleteDateIsNull();
 
     /**
      * IDによりユーザー情報を検索します。

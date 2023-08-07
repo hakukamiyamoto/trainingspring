@@ -44,6 +44,14 @@ public class UserService {
 	public List<User> searchAll() {
 		return userMapper.searchAll();
 	}
+	
+	/**
+	  * 論理削除されていないユーザーを取得
+	  * @return List<User>
+	  */
+	public List<User> findActiveUsers() {
+	    return userMapper.findWhereDeleteDateIsNull();
+	}
 
 	/**
 	 * ユーザー情報 主キー検索
@@ -263,12 +271,13 @@ public class UserService {
 	}
 
 	/**
-	  * ユーザー情報 物理削除
+	  * ユーザー情報 論理削除
 	  * @param id ユーザーID
 	  */
 	public void delete(Long id) {
-		User user = findById(id);
-		userMapper.delete(user);
+	    User user = findById(id);
+	    user.setDeleteDate(new Date());  // 削除日時をセット
+	    userMapper.update(user);  // 更新メソッドを呼び出す
 	}
 
 
