@@ -19,6 +19,11 @@
 		SELECT * FROM user WHERE username = #{username}
 	</select>
 
+
+	<select id="showName" parameterType="string" resultType="string">
+		SELECT name FROM user WHERE username = #{username}
+	</select>
+
 	<select id="findByAddressStartingWith" parameterType="string"
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE address LIKE CONCAT(#{address},
@@ -38,14 +43,16 @@
 	</select>
 
 	<insert id="insert" parameterType="com.example.demo.entity.User">
-		INSERT INTO user(username, name, address, phone, password, create_date,
+		INSERT INTO user(username,
+		name, address, phone, password, create_date,
 		update_date)
 		VALUES(#{username}, #{name}, #{address}, #{phone}, #{password}, NOW(),
 		NOW())
 	</insert>
 
 	<insert id="bulkInsert" parameterType="java.util.List">
-		INSERT INTO user(username, name, address, phone, password, create_date,
+		INSERT INTO user(username, name, address, phone, password,
+		create_date,
 		update_date)
 		VALUES
 		<foreach collection="list" item="user" separator=",">

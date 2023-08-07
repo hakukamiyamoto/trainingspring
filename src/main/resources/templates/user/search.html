@@ -8,7 +8,7 @@
 <body>
 	<div class="container">
 		<h1>ユーザー住所検索</h1>
-		<p th:text="'こんにちは、 ' + ${#authentication.name} + 'さん'"></p>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<br>
 		<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message text-danger"></div>
 		<form th:action="@{/user/search}" th:object="${keywordForm}" method="post" class="row">

@@ -8,7 +8,7 @@
 <body>
 	<div class="container">
 		<h1>ID検索</h1>
-		<p th:text="'こんにちは、 ' + ${#authentication.name} + 'さん'"></p>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<br>
 		<form th:action="@{/user/id_search}" th:object="${userSearchRequest}" th:method="post" class="row">
 			<div class="col-md-1 d-flex align-items-center">

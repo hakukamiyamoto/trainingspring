@@ -12,7 +12,7 @@
 
 
 		<h1>ユーザー一括登録</h1>
-		<p th:text="'こんにちは、 ' + ${#authentication.name} + 'さん'"></p>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<form th:action="@{/user/bulkcreate}" th:object="${bulkUserRequests}" th:method="post">
 
 			<div id="inputFields" th:each="userReq, iterStat : *{userRequests}">

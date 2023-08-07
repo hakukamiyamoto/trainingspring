@@ -14,11 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,15 +49,23 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
+	@ControllerAdvice
+	public class GlobalControllerAdvice {
+		@ModelAttribute("user")
+		public User globalUser() {
+			return userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		}
+	}
+
 	/**
 	 * ユーザー情報一覧画面を表示
 	 * @param model Model
 	 * @return ユーザー情報一覧画面
 	 */
 	@GetMapping(value = "/user/list")
-	public String displayList(Model model,Principal principal) {
+	public String displayList(Model model, Principal principal) {
 		String loggedInUserName = principal.getName();
-	    model.addAttribute("username", loggedInUserName);
+		model.addAttribute("username", loggedInUserName);
 		List<User> userlist = userService.searchAll();
 		model.addAttribute("userlist", userlist);
 		return "user/list";

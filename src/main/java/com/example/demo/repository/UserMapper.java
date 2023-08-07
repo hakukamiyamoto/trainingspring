@@ -32,6 +32,13 @@ public interface UserMapper {
      * @return ユーザー情報
      */
     User findByUsername(String username);
+    
+    /**
+     * ユーザー名により名前を表示します。
+     * @param name ユーザー名
+     * @return ユーザー情報
+     */
+    String showName(String username);
 
     /**
      * 住所で前方一致検索します。

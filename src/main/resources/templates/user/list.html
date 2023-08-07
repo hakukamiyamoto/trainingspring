@@ -6,7 +6,8 @@
 <body>
 	<div class="container">
 		<h1>ユーザー情報一覧</h1>
-		<p th:text="'こんにちは、 ' + ${#authentication.name} + 'さん'"></p>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
+
 		<div class="float-end">
 			<a th:href="@{/user/search}" class="btn btn-info">検索</a>
 

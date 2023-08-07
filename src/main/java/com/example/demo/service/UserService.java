@@ -243,4 +243,11 @@ public class UserService {
 		userMapper.delete(user);
 	}
 
+
+	public User findByUsername(String name) {
+		return userMapper.findByUsername(name);
+	}
+
+	
+
 }
