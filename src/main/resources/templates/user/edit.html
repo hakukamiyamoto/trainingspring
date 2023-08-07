@@ -9,7 +9,7 @@
 			<label class="text-danger" th:text="${error}"></label>
 		</div>
 		<h1>ユーザー情報編集</h1>
-
+		<p th:text="'こんにちは、 ' + ${#authentication.name} + 'さん'"></p>
 		<form th:action="@{/user/update}" th:object="${userUpdateRequest}" th:method="post">
 			<input type="hidden" th:field="*{id}" />
 			<div>

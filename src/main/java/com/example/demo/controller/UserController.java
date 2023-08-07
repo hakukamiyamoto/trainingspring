@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,7 +53,9 @@ public class UserController {
 	 * @return ユーザー情報一覧画面
 	 */
 	@GetMapping(value = "/user/list")
-	public String displayList(Model model) {
+	public String displayList(Model model,Principal principal) {
+		String loggedInUserName = principal.getName();
+	    model.addAttribute("username", loggedInUserName);
 		List<User> userlist = userService.searchAll();
 		model.addAttribute("userlist", userlist);
 		return "user/list";

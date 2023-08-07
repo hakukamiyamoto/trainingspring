@@ -36,7 +36,7 @@ public class SecurityConfig {
 
 		// URLごとの認可設定を下記で行う。
 		).authorizeHttpRequests(authz -> authz
-				.mvcMatchers("/signout","/login/**", "/rest/**","/user/**","/user/create/**","/signin/**", "/usersignin/**","/signin?failed","/user/upload-csv","/img/**", "/css/**", "/js/**").permitAll()
+				.mvcMatchers("/signout","/login/**", "/rest/**","/signin/**", "/usersignin/**","/signin?failed","/img/**", "/css/**", "/js/**").permitAll()
 				.anyRequest().authenticated());
 
 		// Bean登録
