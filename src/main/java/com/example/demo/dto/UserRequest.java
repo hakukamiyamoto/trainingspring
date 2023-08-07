@@ -19,6 +19,16 @@ public class UserRequest implements Serializable {
 	@NotEmpty(message = "名前を入力してください")
 	@Size(max = 100, message = "名前は100桁以内で入力してください")
 	private String name;
+	
+	/**
+	 * ユーザーID
+	 */
+	@NotEmpty(message = "ユーザーIDを入力してください")
+	@Size(max = 100, message = "ユーザーIDは100桁以内で入力してください")
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "ユーザーIDは英数字のみである必要があります")
+	private String username;
+	
+	
 	/**
 	 * 住所
 	 */
@@ -29,4 +39,10 @@ public class UserRequest implements Serializable {
 	 */
 	@Pattern(regexp = "0\\d{1,4}-\\d{1,4}-\\d{4}", message = "電話番号の形式で入力してください")
 	private String phone;
+	/**
+	 * パスワード
+	 */
+	@NotEmpty(message = "パスワードを入力してください")
+	@Size(max = 255, message = "パスワードは255桁以内で入力してください")
+	private String password;
 }

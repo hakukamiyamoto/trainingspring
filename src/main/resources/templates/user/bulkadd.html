@@ -18,6 +18,12 @@
 				<h2 th:text="'ユーザー' + ${iterStat.index + 1}"></h2>
 
 				<div class="form-group">
+					<label>ユーザーID：<span class="text-danger">※</span></label>
+					<input type="text" th:field="*{userRequests[__${iterStat.index}__].username}" class="form-control">
+				</div>
+
+				
+				<div class="form-group">
 					<label>名前：<span class="text-danger">※</span></label>
 					<input type="text" th:field="*{userRequests[__${iterStat.index}__].name}" class="form-control">
 				</div>
@@ -31,6 +37,12 @@
 					<label>電話番号：<span class="text-danger">※</span></label>
 					<input type="text" th:field="*{userRequests[__${iterStat.index}__].phone}" class="form-control">
 				</div>
+				
+				<div class="form-group">
+				<label>パスワード：<span class="text-danger">※</span></label>
+				<input type="password" th:field="*{userRequests[__${iterStat.index}__].password}" class="form-control">
+			</div>
+				
 				<hr width="400">
 			</div>
 
