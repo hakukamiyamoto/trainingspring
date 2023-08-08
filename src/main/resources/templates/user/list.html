@@ -59,9 +59,15 @@
 			<button type="submit" class="btn btn-primary">CSVエクスポート</button>
 		</form>
 		<br>
+		<div class="float-start">
+			<form th:action="@{/user/deletelist}" th:method="get">
+				<button type="submit" class="btn btn-secondary">削除したユーザー</button>
+			</form>
+
+		</div>
 		<div class="float-end">
 			<form th:action="@{/signout}" th:method="post">
-				<input type="submit" value="Logout">
+				<button type="submit" class="btn btn-secondary" value="Logout">ログアウト</button>
 				<input type="hidden" name="_csrf" value="${_csrf.token}" />
 			</form>
 		</div>

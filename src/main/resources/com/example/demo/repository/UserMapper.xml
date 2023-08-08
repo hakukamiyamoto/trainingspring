@@ -13,6 +13,12 @@
 		resultType="com.example.demo.entity.User">
 		SELECT * FROM user WHERE delete_date IS NULL
 	</select>
+	
+	
+	<select id="findWhereDeleteDateIsNotNull"
+		resultType="com.example.demo.entity.User">
+		SELECT * FROM user WHERE delete_date IS NOT NULL
+	</select>
 
 
 	<select id="findById" parameterType="long"
@@ -90,12 +96,18 @@
 
 	<update id="update" parameterType="com.example.demo.entity.User">
 		UPDATE user
-		SET username =
-		#{username}, name = #{name}, address = #{address}, phone =
+		SET username = #{username},
+		name = #{name},
+		address = #{address},
+		phone =
 		#{phone},
-		password = #{password}, update_date = NOW()
+		password = #{password},
+		update_date = NOW(),
+		delete_date =
+		#{deleteDate}  
 		WHERE id = #{id}
 	</update>
+
 
 	<select id="search"
 		parameterType="com.example.demo.dto.UserSearchRequest"

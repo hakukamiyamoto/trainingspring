@@ -52,6 +52,14 @@ public class UserService {
 	public List<User> findActiveUsers() {
 	    return userMapper.findWhereDeleteDateIsNull();
 	}
+	
+	/**
+	  * 論理削除されていないユーザーを取得
+	  * @return List<User>
+	  */
+	public List<User> findDeleteUsers() {
+	    return userMapper.findWhereDeleteDateIsNotNull();
+	}
 
 	/**
 	 * ユーザー情報 主キー検索
@@ -281,8 +289,8 @@ public class UserService {
 	}
 
 
-	public User findByUsername(String name) {
-		return userMapper.findByUsername(name);
+	public User findByUsername(String string) {
+		return userMapper.findByUsername(string);
 	}
 
 	

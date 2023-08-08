@@ -70,6 +70,22 @@ public class UserController {
 		model.addAttribute("userlist", userlist);
 		return "user/list";
 	}
+	
+	
+	/**
+	 * ユーザー情報一覧画面を表示
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@GetMapping(value = "/user/deletelist")
+	public String displayDeleteList(Model model, Principal principal) {
+		String loggedInUserName = principal.getName();
+		model.addAttribute("username", loggedInUserName);
+		List<User> userlist = userService.findDeleteUsers();
+		model.addAttribute("userlist", userlist);
+		return "user/deletelist";
+	}
+
 
 	/**
 	   * ユーザー新規登録画面を表示
@@ -81,6 +97,8 @@ public class UserController {
 		model.addAttribute("userRequest", new UserRequest());
 		return "user/add";
 	}
+	
+	
 
 	/**
 	 * ユーザー新規登録

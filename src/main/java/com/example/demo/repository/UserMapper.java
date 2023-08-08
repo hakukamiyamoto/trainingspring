@@ -25,6 +25,12 @@ public interface UserMapper {
 	  * @return List<User>
 	  */
     List<User> findWhereDeleteDateIsNull();
+    
+    /**
+	  * 論理削除されているユーザーを取得
+	  * @return List<User>
+	  */
+   List<User> findWhereDeleteDateIsNotNull();
 
     /**
      * IDによりユーザー情報を検索します。
@@ -35,10 +41,10 @@ public interface UserMapper {
 
     /**
      * ユーザー名によりユーザー情報を検索します。
-     * @param username ユーザー名
+     * @param string ユーザー名
      * @return ユーザー情報
      */
-    User findByUsername(String username);
+    User findByUsername(String string);
     
     /**
      * ユーザー名により名前を表示します。
@@ -103,4 +109,5 @@ public interface UserMapper {
      * @param user ユーザー
      */
     void delete(User user);
+
 }
