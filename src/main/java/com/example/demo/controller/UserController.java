@@ -49,6 +49,8 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
+	
+
 
 	@ControllerAdvice
 	public class GlobalControllerAdvice {

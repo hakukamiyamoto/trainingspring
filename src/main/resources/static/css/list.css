@@ -35,7 +35,15 @@ table th {
 }
 
 .vertical-align-middle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+#weatherInfo {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	/* 縦方向にアイテムを配置 */
 }
