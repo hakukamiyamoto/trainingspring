@@ -25,7 +25,7 @@ public class SecurityConfig {
 				.usernameParameter("username")
 				.passwordParameter("password")
 				.failureUrl("/signin?failed")
-				.defaultSuccessUrl("/user/list")
+				.defaultSuccessUrl("/user/mypage")
 
 		// ログアウトに関する設定。
 		).logout(logout -> logout

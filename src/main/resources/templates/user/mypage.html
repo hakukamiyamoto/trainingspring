@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = 'マイページ', scripts = ~{::script}, links = ~{::link})"></head>
+
+<body>
+	<div class="container">
+		<h1>マイページ</h1>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
+		<div th:object="${userData}">
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">ユーザーID</div>
+				<div class="col pt-3 border">
+					<p th:text="*{username}"></p>
+				</div>
+			</div>
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">名前</div>
+				<div class="col pt-3 border">
+					<p th:text="*{name}"></p>
+				</div>
+			</div>
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">住所</div>
+				<div class="col pt-3 border">
+					<p th:text="*{address}"></p>
+				</div>
+			</div>
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">電話番号</div>
+				<div class="col pt-3 border">
+					<p th:text="*{phone}"></p>
+				</div>
+			</div>
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">パスワード</div>
+				<div class="col pt-3 border">
+					<p>非表示</p>
+				</div>
+			</div>
+		</div>
+		<br />
+		<div class="text-center">
+			<a th:href="@{/user/{id}/edit(id=*{id})}" class="btn btn-primary">　編集　</a>
+			<a href="/user/list" class="btn btn-secondary">一覧を見る</a>
+		</div>
+	</div>
+</body>
+
+</html>
