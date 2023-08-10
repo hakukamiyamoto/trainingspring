@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = '日報', scripts = ~{::script}, links = ~{::link})"></head>
+
+<body>
+	<div class="container">
+		<div th:if="${validationError}" th:each="error : ${validationError}">
+			<label class="text-danger" th:text="${error.defaultMessage}"></label>
+		</div>
+		<h1>日報</h1>
+		<form th:action="@{/user/postreport}" th:object="${reportRequest}" th:method="post">
+
+			<div class="form-group">
+				<label>タイトル</label>
+				<input type="text" th:field="*{title}" class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label>本文</label>
+				<textarea rows="20" th:field="*{report}" class="form-control"></textarea>
+				<!-- rows属性でテキストエリアの高さを調整できます -->
+			</div>
+
+			<br />
+			<div class="text-center">
+				<a href="/user/list" class="btn btn-secondary">キャンセル</a>
+				<input type="submit" value="　提出　" class="btn btn-primary">
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

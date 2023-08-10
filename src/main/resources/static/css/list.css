@@ -47,3 +47,29 @@ table th {
 	flex-direction: column;
 	/* 縦方向にアイテムを配置 */
 }
+
+#sidebar {
+	background-color: #343a40;
+	/* ダークテーマの背景色 */
+	color: #ffffff;
+	/* テキストの色 */
+}
+
+#sidebar .nav-link {
+	color: #adb5bd;
+	/* リンクの色 */
+}
+
+#sidebar .nav-link:hover {
+	color: #ffffff;
+	/* ホバー時のリンクの色 */
+	background-color: #495057;
+	/* ホバー時の背景色 */
+}
+
+#sidebar .nav-link.active {
+	color: #ffffff;
+	/* アクティブなリンクの色 */
+	background-color: #495057;
+	/* アクティブなリンクの背景色 */
+}
