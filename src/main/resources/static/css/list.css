@@ -1,3 +1,5 @@
+@charset "UTF-8";
+
 table {
 	width: 90%;
 	border-collapse: collapse;
@@ -48,26 +50,28 @@ table th {
 	/* 縦方向にアイテムを配置 */
 }
 
-#sidebar {
+.sidebar {
 	background-color: #343a40;
 	/* ダークテーマの背景色 */
 	color: #ffffff;
 	/* テキストの色 */
+	padding-top: 48px;
 }
 
-#sidebar .nav-link {
-	color: #adb5bd;
+
+.sidebar .nav-link {
+	color: #495057;
 	/* リンクの色 */
 }
 
-#sidebar .nav-link:hover {
+.sidebar .nav-link:hover {
 	color: #ffffff;
 	/* ホバー時のリンクの色 */
 	background-color: #495057;
 	/* ホバー時の背景色 */
 }
 
-#sidebar .nav-link.active {
+.sidebar .nav-link.active {
 	color: #ffffff;
 	/* アクティブなリンクの色 */
 	background-color: #495057;

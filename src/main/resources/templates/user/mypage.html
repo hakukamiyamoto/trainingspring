@@ -4,7 +4,6 @@
 <head th:replace="common/head :: head_fragment(title = 'マイページ', scripts = ~{::script}, links = ~{::link})">
 	<!-- Bootstrap CSS -->
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" href="/css/list.css">
 </head>
 
 <body>
@@ -16,7 +15,7 @@
 				<div class="position-sticky">
 					<ul class="nav flex-column">
 						<li class="nav-item">
-							<a class="nav-link active" href="/user/report">
+							<a class="nav-link" href="/user/report">
 								日報を書く
 							</a>
 						</li>
@@ -26,7 +25,7 @@
 							</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" href="#">
+							<a class="nav-link" href="#">
 								予定を追加
 							</a>
 						</li>
