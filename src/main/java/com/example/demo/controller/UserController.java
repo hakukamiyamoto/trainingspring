@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +14,13 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,10 +30,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.dto.BulkUserRequests;
 import com.example.demo.dto.KeywordForm;
+import com.example.demo.dto.Signin;
 import com.example.demo.dto.UserRequest;
+import com.example.demo.dto.UserSearchRequest;
 import com.example.demo.dto.UserUpdateRequest;
 import com.example.demo.entity.User;
-import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 
 /**
@@ -44,8 +48,14 @@ public class UserController {
 	 */
 	@Autowired
 	private UserService userService;
-	@Autowired
-	private UserRepository repository;
+
+	@ControllerAdvice
+	public class GlobalControllerAdvice {
+		@ModelAttribute("user")
+		public User globalUser() {
+			return userService.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		}
+	}
 
 	/**
 	 * ユーザー情報一覧画面を表示
@@ -53,11 +63,29 @@ public class UserController {
 	 * @return ユーザー情報一覧画面
 	 */
 	@GetMapping(value = "/user/list")
-	public String displayList(Model model) {
-		List<User> userlist = userService.searchAll();
+	public String displayList(Model model, Principal principal) {
+		String loggedInUserName = principal.getName();
+		model.addAttribute("username", loggedInUserName);
+		List<User> userlist = userService.findActiveUsers();
 		model.addAttribute("userlist", userlist);
 		return "user/list";
 	}
+	
+	
+	/**
+	 * ユーザー情報一覧画面を表示
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@GetMapping(value = "/user/deletelist")
+	public String displayDeleteList(Model model, Principal principal) {
+		String loggedInUserName = principal.getName();
+		model.addAttribute("username", loggedInUserName);
+		List<User> userlist = userService.findDeleteUsers();
+		model.addAttribute("userlist", userlist);
+		return "user/deletelist";
+	}
+
 
 	/**
 	   * ユーザー新規登録画面を表示
@@ -69,6 +97,8 @@ public class UserController {
 		model.addAttribute("userRequest", new UserRequest());
 		return "user/add";
 	}
+	
+	
 
 	/**
 	 * ユーザー新規登録
@@ -130,8 +160,13 @@ public class UserController {
 			return "user/bulkadd";
 		}
 
-		// ユーザーの一括登録処理
-		userService.bulkCreate(userRequests);
+		try {
+			// ユーザーの一括登録処理
+			userService.bulkCreate(userRequests);
+		} catch (RuntimeException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			return "user/bulkadd";
+		}
 
 		return "redirect:/user/list";
 	}
@@ -160,9 +195,11 @@ public class UserController {
 		User user = userService.findById(id);
 		UserUpdateRequest userUpdateRequest = new UserUpdateRequest();
 		userUpdateRequest.setId(user.getId());
+		userUpdateRequest.setUsername(user.getUsername());
 		userUpdateRequest.setName(user.getName());
 		userUpdateRequest.setPhone(user.getPhone());
 		userUpdateRequest.setAddress(user.getAddress());
+
 		model.addAttribute("userUpdateRequest", userUpdateRequest);
 		return "user/edit";
 	}
@@ -193,6 +230,30 @@ public class UserController {
 	}
 
 	/**
+	   * ユーザーID検索画面を表示
+	   * @param model Model
+	   * @return ユーザー情報一覧画面
+	   */
+	@GetMapping(value = "/user/idsearch")
+	public String displaySearch(Model model) {
+		model.addAttribute("userSearchRequest", new UserSearchRequest());
+		return "user/idsearch";
+	}
+
+	/**
+	 * ユーザーID情報検索
+	 * @param userSearchRequest リクエストデータ
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@PostMapping("/user/id_search")
+	public String search(@ModelAttribute UserSearchRequest userSearchRequest, Model model) {
+		User user = userService.search(userSearchRequest);
+		model.addAttribute("userinfo", user);
+		return "user/idsearch";
+	}
+
+	/**
 	 *  検索画面を表示するGETリクエスト
 	 * @param model
 	 * @return
@@ -206,38 +267,74 @@ public class UserController {
 		return "user/search";
 	}
 
-	/**
-	 * 検索をするリクエスト
-	 * @param keywordForm　キーワードクラス
-	 * @param result
-	 * @param model
-	 * @return　user/search
-	 */
-	@PostMapping("/user/search")
-	public String search(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
-		if (result.hasErrors()) {
-			model.addAttribute("errorMessage", "キーワードを入力してください。");
-			return "user/search";
-		}
-		String keyword = keywordForm.getKeyword();
-		String searchType = keywordForm.getSearchType();
+	// 名前での検索
+	@PostMapping("/user/search/name")
+	public String searchByName(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
+	    if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "入力エラーがあります。");
+	        return "user/search";
+	    }
 
-		List<User> searchResult;
-		if ("fromStart".equals(searchType)) {
-			searchResult = userService.searchByAddressStartingWith(keyword);
-		} else if ("endWith".equals(searchType)) {
-			searchResult = userService.searchByAddressEndingWith(keyword);
-		} else if ("including".equals(searchType)) {
-			searchResult = userService.searchByAddressContaining(keyword);
-		} else {
-			model.addAttribute("errorMessage", "不正な検索タイプです。");
-			return "user/search";
-		}
+	    String nameKeyword = keywordForm.getNameKeyword();
+	    if (nameKeyword == null || nameKeyword.isEmpty()) {
+	        model.addAttribute("errorMessage", "名前を入力してください。");
+	        return "user/search";
+	    }
 
-		model.addAttribute("userlist", searchResult);
+	    String searchType = keywordForm.getNameSearchType();  // <-- 名前用のsearchTypeに変更
+	    List<User> nameSearchResult;
 
-		return "user/search";
+	    switch (searchType) {
+	        case "fromStart":
+	            nameSearchResult = userService.searchByNameStartingWith(nameKeyword);
+	            break;
+	        case "endWith":
+	            nameSearchResult = userService.searchByNameEndingWith(nameKeyword);
+	            break;
+	        case "including":
+	        default:
+	            nameSearchResult = userService.searchByNameContaining(nameKeyword);
+	            break;
+	    }
+
+	    model.addAttribute("userlist", nameSearchResult);
+	    return "user/search";
 	}
+
+	// 住所検索をするリクエスト
+	@PostMapping("/user/search/address")
+	public String searchByAdress(@Validated @ModelAttribute KeywordForm keywordForm, BindingResult result, Model model) {
+	    if (result.hasErrors()) {
+	        model.addAttribute("errorMessage", "入力エラーがあります。");
+	        return "user/search";
+	    }
+
+	    String addressKeyword = keywordForm.getAddressKeyword();
+	    if (addressKeyword == null || addressKeyword.isEmpty()) {
+	        model.addAttribute("errorMessage", "住所を入力してください。");
+	        return "user/search";
+	    }
+
+	    String searchType = keywordForm.getAddressSearchType();  // <-- 住所用のsearchTypeに変更
+	    List<User> addressSearchResult;
+
+	    switch (searchType) {
+	        case "fromStart":
+	            addressSearchResult = userService.searchByAddressStartingWith(addressKeyword);
+	            break;
+	        case "endWith":
+	            addressSearchResult = userService.searchByAddressEndingWith(addressKeyword);
+	            break;
+	        case "including":
+	        default:
+	            addressSearchResult = userService.searchByAddressContaining(addressKeyword);
+	            break;
+	    }
+
+	    model.addAttribute("userlist", addressSearchResult);
+	    return "user/search";
+	}
+
 
 	/**
 	 * ユーザーリストをCSV形式でエクスポートする
@@ -276,17 +373,16 @@ public class UserController {
 	/**
 	 * CSVファイルをアップロードして一括変更を行う
 	 * @param file CSVファイル
-	 * @return user/list
+	 * @return user/uploadcsv
 	 * @throws RuntimeException CSVファイルのパースに失敗した場合にスローされます
 	 */
-	@PostMapping("/upload-csv")
+	@PostMapping("/user/upload-csv")
 	public String uploadCSV(@RequestParam("file") MultipartFile file, Model model) {
 		List<String> errorMessages = new ArrayList<>();
 		try {
 			// ファイルの内容を読み取るためのInputStreamを作成
 			BufferedReader in = new BufferedReader(new InputStreamReader(file.getInputStream(), "Shift_JIS"));
 
-			// CSVファイルをパースし、各レコードを取得
 			Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
 
 			// 取得した全てのレコードに対して登録
@@ -303,6 +399,19 @@ public class UserController {
 	}
 
 	/**
+	 * 複数のユーザー情報を削除
+	 * @param deleteFlags 削除するユーザーIDのリスト
+	 * @param model Model
+	 * @return ユーザー情報一覧画面
+	 */
+	@PostMapping("/user/mutipledelete")
+	public String deleteMultiple(@RequestParam List<Long> deleteFlags, Model model) {
+		// ユーザー情報の削除
+		userService.deleteMultiple(deleteFlags);
+		return "redirect:/user/list";
+	}
+
+	/**
 	   * ユーザー情報削除
 	   * @param id 表示するユーザーID
 	   * @param model Model
@@ -315,4 +424,22 @@ public class UserController {
 		return "redirect:/user/list";
 	}
 
+	/**
+	 * ログインページを表示
+	 *@return ユーザーログイン画面
+	 */
+	@GetMapping("/signin")
+	public String signin(Model model, @RequestParam(value = "failed", required = false) String failed) {
+		if (failed != null) {
+			model.addAttribute("errorMessage", "ユーザー名またはパスワードが違います。");
+		}
+		model.addAttribute("signin", new Signin());
+		return "signin/signin";
+	}
+
+	@PostMapping("/signout")
+	public String logout() {
+
+		return "redirect:/signin"; // リダイレクト先
+	}
 }

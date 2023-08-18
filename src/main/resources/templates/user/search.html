@@ -1,35 +1,57 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 
-<head th:replace="common/head :: head_fragment(title = 'ユーザー住所検索', scripts = ~{::script}, links = ~{::link})">
+<head th:replace="common/head :: head_fragment(title = 'ユーザー検索', scripts = ~{::script}, links = ~{::link})">
 	<link rel="stylesheet" type="text/css" href="/css/list.css">
 </head>
 
 <body>
 	<div class="container">
-		<h1>ユーザー住所検索</h1>
+		<h1>ユーザー検索</h1>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<br>
 		<div th:if="${errorMessage}" th:text="${errorMessage}" class="error-message text-danger"></div>
-		<form th:action="@{/user/search}" th:object="${keywordForm}" method="post" class="row">
-			<div class="col-md-9">
-				<input type="text" th:field="*{keyword}" class="form-control" />
+
+		<!-- 名前検索のフォーム -->
+		<form th:action="@{/user/search/name}" th:object="${keywordForm}" method="post" class="row mb-4">
+			<div class="col-md-7">
+				<input type="text" th:field="*{nameKeyword}" class="form-control" placeholder="名前で検索" />
 			</div>
 			<div class="col-md-2">
-				<select th:field="*{searchType}" class="form-control">
+				<select th:field="*{NameSearchType}" class="form-control">
 					<option value="fromStart">から始まる</option>
 					<option value="endWith">で終わる</option>
 					<option value="including">を含む</option>
 				</select>
 			</div>
-			<div class="col-md-1">
-				<button type="submit" class="btn btn-primary">検索</button>
+			<div class="col-md-3">
+				<button type="submit" class="btn btn-primary">名前で検索</button>
 			</div>
 		</form>
+
+		<!-- 住所検索のフォーム -->
+		<form th:action="@{/user/search/address}" th:object="${keywordForm}" method="post" class="row">
+			<div class="col-md-7">
+				<input type="text" th:field="*{addressKeyword}" class="form-control" placeholder="住所で検索" />
+			</div>
+			<div class="col-md-2">
+				<select th:field="*{AddressSearchType}" class="form-control">
+					<option value="fromStart">から始まる</option>
+					<option value="endWith">で終わる</option>
+					<option value="including">を含む</option>
+				</select>
+			</div>
+			<div class="col-md-3">
+				<button type="submit" class="btn btn-primary">住所で検索</button>
+			</div>
+		</form>
+
 
 		<table class="table table-striped">
 			<thead>
 				<tr>
 					<th>ID</th>
+					<th>ユーザーID</th>
 					<th>名前</th>
 					<th>住所</th>
 					<th>電話番号</th>
@@ -42,6 +64,7 @@
 			<tbody>
 				<tr th:each="user : ${userlist}" th:object="${user}" class="align-middle">
 					<td th:text="*{id}"></td>
+					<td th:text="*{username}"></td>
 					<td th:text="*{name}"></td>
 					<td th:text="*{address}"></td>
 					<td th:text="*{phone}"></td>

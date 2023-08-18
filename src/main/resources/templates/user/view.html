@@ -6,7 +6,14 @@
 <body>
 	<div class="container">
 		<h1>ユーザー情報詳細</h1>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<div th:object="${userData}">
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">ユーザーID</div>
+				<div class="col pt-3 border">
+					<p th:text="*{username}"></p>
+				</div>
+			</div>
 			<div class="row mx-md-n5">
 				<div class="col-2 pt-3 border bg-light">名前</div>
 				<div class="col pt-3 border">
@@ -23,6 +30,12 @@
 				<div class="col-2 pt-3 border bg-light">電話番号</div>
 				<div class="col pt-3 border">
 					<p th:text="*{phone}"></p>
+				</div>
+			</div>
+			<div class="row mx-md-n5">
+				<div class="col-2 pt-3 border bg-light">パスワード</div>
+				<div class="col pt-3 border">
+					<p>非表示</p>
 				</div>
 			</div>
 		</div>

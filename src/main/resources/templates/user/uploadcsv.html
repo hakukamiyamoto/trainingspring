@@ -6,6 +6,7 @@
 <body>
 	<div class="container">
 		<h1>CSVから一括編集</h1>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
 		<br>
 
 		<!--エラーメッセージの表示 -->
@@ -15,11 +16,11 @@
 			</div>
 		</div>
 		<!--成功メッセージの表示 -->
-		<div th:if="${success}"  role="alert" th:text="${success}"></div>
+		<div th:if="${success}" role="alert" th:text="${success}"></div>
 
 
 		<div class="left">
-			<form method="POST" action="/upload-csv" enctype="multipart/form-data">
+			<form th:action="@{/user/upload-csv}" method="post" enctype="multipart/form-data">
 				<input type="file" name="file" accept=".csv">
 				<button type="submit" value="Upload" class="btn btn-primary">CSVインポート</button>
 			</form>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="common/head :: head_fragment(title = 'ユーザーID検索', scripts = ~{::script}, links = ~{::link})">
+	<link rel="stylesheet" type="text/css" href="/css/list.css">
+</head>
+
+<body>
+	<div class="container">
+		<h1>ID検索</h1>
+		<p th:text="'こんにちは、 ' + ${user.name} + 'さん'"></p>
+		<br>
+		<form th:action="@{/user/id_search}" th:object="${userSearchRequest}" th:method="post" class="row">
+			<div class="col-md-1 d-flex align-items-center">
+			<font size="4">	ID：</font>
+			</div>
+			<div class="col-md-3">
+				<input type="text" th:field="*{id}" class="form-control" />
+			</div>
+			<div class="col-md-8">
+				<button type="submit" class="btn btn-primary">検索</button>
+			</div>
+			<br />
+		</form>
+		<div th:if="${userinfo}">
+			<table th:object="${userinfo}">
+				<tr>
+					<th class="cell_title">名前</th>
+					<td th:text="*{name}"></td>
+				</tr>
+				<tr>
+					<th class="cell_title">ユーザーID</th>
+					<td th:text="*{username}"></td>
+				</tr>
+				<tr>
+					<th class="cell_title">住所</th>
+					<td th:text="*{address}"></td>
+				</tr>
+				<tr>
+					<th class="cell_title">電話番号</th>
+					<td th:text="*{phone}"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>

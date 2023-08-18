@@ -1,28 +1,43 @@
 package com.example.demo.dto;
 
-import javax.validation.constraints.NotEmpty;
-
+@ValidKeyword
 public class KeywordForm {
-	@NotEmpty(message = "キーワードを入力してください。")
-	private String keyword;
-	private String searchType;
 
-	public String getKeyword() {
-        return keyword;
-    }
+	private String addressKeyword;
+	private String nameKeyword;
+	private String addressSearchType;
+	private String nameSearchType;
 
-    public void setKeyword(String keyword) {
-        this.keyword = keyword;
-    }
-
-    public String getSearchType() {
-        return searchType;
-    }
-
-	public void setSearchType(String searchType) {
-		this.searchType = searchType;
+	public String getAddressKeyword() {
+		return addressKeyword;
 	}
 
-    
-    
+	public void setAddressKeyword(String addressKeyword) {
+		this.addressKeyword = addressKeyword;
+	}
+
+	public String getNameKeyword() {
+		return nameKeyword;
+	}
+
+	public void setNameKeyword(String nameKeyword) {
+		this.nameKeyword = nameKeyword;
+	}
+
+	public String getAddressSearchType() {
+		return addressSearchType;
+	}
+
+	public void setAddressSearchType(String adressSearchType) {
+		this.addressSearchType = adressSearchType;
+	}
+
+	public String getNameSearchType() {
+		return nameSearchType;
+	}
+
+	public void setNameSearchType(String nameSearchType) {
+		this.nameSearchType = nameSearchType;
+	}
+
 }

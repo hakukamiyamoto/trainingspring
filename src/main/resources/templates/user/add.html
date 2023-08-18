@@ -10,6 +10,11 @@
 		</div>
 		<h1>ユーザー新規登録</h1>
 		<form th:action="@{/user/create}" th:object="${userRequest}" th:method="post">
+			
+			<div class="form-group">
+				<label>ユーザーID：<span class="text-danger">※</span></label>
+				<input type="text" th:field="*{username}" class="form-control">
+			</div>
 
 			<div class="form-group">
 				<label>名前：<span class="text-danger">※</span></label>
@@ -24,6 +29,11 @@
 			<div class="form-group">
 				<label>電話番号：<span class="text-danger">※</span></label>
 				<input type="text" th:field="*{phone}" class="form-control">
+			</div>
+			
+			<div class="form-group">
+				<label>パスワード：<span class="text-danger">※</span></label>
+				<input type="password" th:field="*{password}" class="form-control">
 			</div>
 			<br />
 			<div class="text-center">
